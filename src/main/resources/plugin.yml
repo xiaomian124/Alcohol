@@ -1,0 +1,25 @@
+name: Alcohol
+version: '1.0'
+main: com.xiaomian124.alcohol.AlcoholPlugin
+api-version: '26.2'
+description: 酿酒插件，丰富你的服务器游戏体验。
+author: xiaomian124
+
+commands:
+  alcohol:
+    description: Alcohol 插件主命令
+    usage: /alcohol <recipe|give|reload|kill|help>
+
+permissions:
+  alcohol.recipe:
+    description: 允许使用 /alcohol recipe 查看配方
+    default: true
+  alcohol.give:
+    description: 允许使用 /alcohol give 获取物品
+    default: op
+  alcohol.reload:
+    description: 允许使用 /alcohol reload 重新加载插件
+    default: op
+  alcohol.kill:
+    description: 允许使用 /alcohol kill 清除残留实体
+    default: op
