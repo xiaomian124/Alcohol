@@ -1,0 +1,193 @@
+========================================
+版权与致谢声明 (NOTICE)
+========================================
+
+一、本插件信息
+----------------------------------------
+
+插件名称：Alcohol
+插件作者：xiaomian124
+插件类型：Minecraft Paper
+开源协议：GNU General Public License v3.0（详见第五节）
+仓库地址：https://github.com/xiaomian124/Alcohol
+
+
+二、致谢
+----------------------------------------
+
+本插件的玩法设计灵感与部分物品命名思路，参考了以下两个模组：
+
+1. 盛节精酿（Let's Do Brewery）
+   - 原作者：satisfyu
+   - 模组链接：https://github.com/Let-s-Do-Collection/Brewery
+
+2. 葡园酒香（Let's Do Vinery）
+   - 原作者：satisfyu
+   - 模组链接：https://github.com/Let-s-Do-Collection/Vinery
+
+在此，衷心感谢原作者 satisfyu 提供的优秀创意与玩法设计。
+本插件在开发过程中参考了上述模组的部分玩法理念与物品命名思路，
+但所有代码、美术资源与文本均为独立实现。
+
+
+三、资源独立性声明
+----------------------------------------
+
+原模组（Let's Do Brewery / Let's Do Vinery）采用分目录授权方式，
+其中以下目录及其所有子目录、文件采用 ARR（All Rights Reserved，
+保留所有权利）协议：
+
+    /common/src/main/resources/
+    /fabric/src/main/resources/
+    /forge/src/main/resources/
+
+本插件未包含、未使用上述 ARR 协议目录下的任何资源文件，包括但不限于：
+
+    - 纹理 / 贴图文件（textures）
+    - 模型文件（models）
+    - 音效文件（sounds）
+    - 本地化文本（lang / zh_cn.json 等语言文件）
+    - 数据包文件（data）
+    - 任何其他位于上述目录及其子目录中的文件
+
+本插件所使用的全部美术、音效与文本资源，均满足以下条件之一：
+
+    1. 由本插件作者自行制作；
+    2. 来源于允许本插件使用的开源 / 公共资源；
+    3. 为 Minecraft 原版资源。
+
+
+四、原模组 MIT 协议声明
+----------------------------------------
+
+原模组除上述 ARR 目录外的其他文件，采用 MIT 协议授权。
+如果本插件中参考或引用了原模组采用 MIT 协议的部分内容，
+则以下声明适用于该部分内容：
+
+--------------------------------------------------
+MIT License
+
+Copyright (c) 2022-2024 Satisfy
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+--------------------------------------------------
+
+
+五、本插件 GPL 3 协议
+----------------------------------------
+
+本插件（除上述引用的第三方内容外）的所有代码与资源，
+均采用 GNU General Public License v3.0 协议。
+
+完整协议全文见项目根目录下的 LICENSE 文件，
+或访问：https://www.gnu.org/licenses/gpl-3.0.txt
+
+Copyright (C) 2026 xiaomian124
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
+六、免责声明
+----------------------------------------
+
+本插件为非官方衍生作品，与 Let's Do Brewery、Let's Do Vinery 的
+原作者 satisfyu 及 Mojang Studios 均无隶属关系。
+
+    - Minecraft 是 Mojang Studios 的商标。
+    - Let's Do Brewery 与 Let's Do Vinery 的名称、标识与相关内容，
+      其版权归原作者 satisfyu 所有。
+    - 本插件不声称对原模组的任何内容拥有版权。
+    - 本插件为独立实现，玩法相似不代表代码或资源相同。
+
+
+七、联系方式
+----------------------------------------
+
+如有版权疑问或合作意向，请通过以下方式联系本插件作者：
+
+    邮箱：vjhcggifgfu@outlook.com
+    GitHub：https://github.com/xiaomian124
+
+
+八、附：原模组许可证原文
+----------------------------------------
+
+为便于查阅，以下附上原模组（Let's Do Brewery / Let's Do Vinery）
+的许可证原文：
+
+--------------------------------------------------
+The following directories, their subdirectories, and any files inside said
+directories or subdirectories are subject to the license below.
+
+    /common/src/main/resources/
+    /fabric/src/main/resources/
+    /forge/src/main/resources/
+
+All Rights Reserved
+Copyright (c) 2022-2024 Satisfy
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+All other files within this repository are subject to the license below.
+
+MIT License
+
+Copyright (c) 2022-2024 Satisfy
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+--------------------------------------------------
+
+
+最后更新：2026/10/2
+
+========================================
