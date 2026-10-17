@@ -39,6 +39,7 @@ public class AlcoholPlugin extends JavaPlugin {
         GiveRegistry.init();
         CustomItemProtectionListener.init();
 
+        LanguageManager.init(this);
         RecipeManager.register(this);
         AgingBarrelManager.initRecipes();
 
@@ -61,6 +62,7 @@ public class AlcoholPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MusicPlayerListener(this), this);
         getServer().getPluginManager().registerEvents(new GiveGUIListener(), this);
         getServer().getPluginManager().registerEvents(new MilkListener(), this);
+        getServer().getPluginManager().registerEvents(new VillagerTradeListener(), this);
 
         if (getCommand("alcohol") != null) {
             RecipeCommand cmd = new RecipeCommand(this);
@@ -110,7 +112,7 @@ public class AlcoholPlugin extends JavaPlugin {
             }
         }.runTaskTimer(this, 6000L, 6000L);
 
-        getLogger().info("Alcohol 插件已启用");
+        getLogger().info("Alcohol plugin has been enabled");
     }
 
     @Override
@@ -129,7 +131,7 @@ public class AlcoholPlugin extends JavaPlugin {
             }
         } catch (Exception ignored) {}
 
-        getLogger().info("Alcohol 插件已禁用");
+        getLogger().info("Alcohol plugin has been disabled");
     }
 
     public static AlcoholPlugin getInstance() {

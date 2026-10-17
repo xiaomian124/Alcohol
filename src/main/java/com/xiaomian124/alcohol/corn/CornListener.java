@@ -120,6 +120,7 @@ public class CornListener implements Listener {
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
+        Player player = event.getPlayer();
 
         if (block.getType() == Material.PLAYER_HEAD) {
             BlockState state = block.getState();
@@ -136,7 +137,7 @@ public class CornListener implements Listener {
             event.setDropItems(false);
             block.getWorld().dropItemNaturally(
                     block.getLocation().add(0.5, 0.5, 0.5),
-                    ItemFactory.createCorn());
+                    ItemFactory.createCorn(player));
 
             block.setType(Material.AIR, false);
 
@@ -162,7 +163,7 @@ public class CornListener implements Listener {
             event.setDropItems(false);
             block.getWorld().dropItemNaturally(
                     block.getLocation().add(0.5, 0.5, 0.5),
-                    ItemFactory.createCornSeed());
+                    ItemFactory.createCornSeed(player));
 
             if (plant.stage == 4) {
                 Location headLoc = block.getLocation().add(0, 1, 0);
@@ -174,7 +175,7 @@ public class CornListener implements Listener {
                             .has(ItemKeys.CORN, PersistentDataType.BYTE)) {
                         block.getWorld().dropItemNaturally(
                                 headLoc.clone().add(0.5, 0.5, 0.5),
-                                ItemFactory.createCorn());
+                                ItemFactory.createCorn(player));
                         headBlock.setType(Material.AIR, false);
                     }
                 }
@@ -187,7 +188,7 @@ public class CornListener implements Listener {
             event.setDropItems(false);
             block.getWorld().dropItemNaturally(
                     block.getLocation().add(0.5, 0.5, 0.5),
-                    ItemFactory.createCornSeed());
+                    ItemFactory.createCornSeed(player));
             CornManager.remove(plant.baseLocation);
         }
     }

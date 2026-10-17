@@ -120,7 +120,7 @@ public class CherryListener implements Listener {
             if (tree == null) return;
 
             event.setCancelled(true);
-            CherryManager.dropCherryFromHarvest(clicked);
+            CherryManager.dropCherryFromHarvest(player, clicked);
 
             clicked.setType(Material.OAK_LEAVES, false);
             makeLeavesPersistent(clicked);
@@ -184,6 +184,7 @@ public class CherryListener implements Listener {
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
+        Player player = event.getPlayer();
         Location loc = block.getLocation();
 
         CherryTree treeByLog = CherryManager.getTreeByLog(loc);
@@ -195,7 +196,7 @@ public class CherryListener implements Listener {
                 if (leafBlock.getType() == Material.OAK_LEAVES
                         || leafBlock.getType() == Material.JUNGLE_LEAVES) {
                     boolean matured = leafBlock.getType() == Material.JUNGLE_LEAVES;
-                    CherryManager.dropCherryFromBreak(leafBlock, matured);
+                    CherryManager.dropCherryFromBreak(player, leafBlock, matured);
                     leafBlock.setType(Material.AIR, false);
                 }
             }
@@ -209,7 +210,7 @@ public class CherryListener implements Listener {
             if (type == Material.OAK_LEAVES || type == Material.JUNGLE_LEAVES) {
                 boolean matured = type == Material.JUNGLE_LEAVES;
                 event.setDropItems(false);
-                CherryManager.dropCherryFromBreak(block, matured);
+                CherryManager.dropCherryFromBreak(player, block, matured);
                 treeByLeaf.leaves.remove(CherryManager.key(loc));
             }
         }
@@ -220,7 +221,7 @@ public class CherryListener implements Listener {
             event.setDropItems(false);
             block.getWorld().dropItemNaturally(
                     block.getLocation().add(0.5, 0.5, 0.5),
-                    ItemFactory.createCherry());
+                    ItemFactory.createCherry(player));
         }
     }
 }

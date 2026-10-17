@@ -22,7 +22,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -72,7 +71,7 @@ public class StorageManager {
         try {
             if (!plugin.getDataFolder().exists()) plugin.getDataFolder().mkdirs();
             config.save(file);
-            plugin.getLogger().info("已保存数据到 data.yml");
+            plugin.getLogger().info("The data has been saved to data.yml");
             // plugin.getLogger().info("已保存 " + pots.size() + " 烹饪锅、"
             //         + boxes.size() + " 酿造炉、"
             //         + presses.size() + " 苹果压榨器、"
@@ -82,7 +81,7 @@ public class StorageManager {
             //         + grapePlants.size() + " 葡萄丛、"
             //         + cherryTrees.size() + " 樱桃树");
         } catch (IOException e) {
-            plugin.getLogger().severe("保存 data.yml 失败: " + e.getMessage());
+            plugin.getLogger().severe("Failed to save data.yml: " + e.getMessage());
         }
     }
 
@@ -361,7 +360,7 @@ public class StorageManager {
         List<Map<?, ?>> cherryTrees = config.getMapList("cherry_trees");
         for (Map<?, ?> raw : cherryTrees) loadCherryTree(raw);
 
-        plugin.getLogger().info("已加载 data.yml 数据");
+        plugin.getLogger().info("Loaded data.yml data!");
         // plugin.getLogger().info("已加载 " + pots.size() + " 烹饪锅、"
         //         + boxes.size() + " 酿造炉、"
         //         + presses.size() + " 苹果压榨器、"

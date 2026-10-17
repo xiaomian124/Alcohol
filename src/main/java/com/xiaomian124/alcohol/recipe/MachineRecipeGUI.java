@@ -1,6 +1,7 @@
 package com.xiaomian124.alcohol.recipe;
 
 import com.xiaomian124.alcohol.ItemFactory;
+import com.xiaomian124.alcohol.LanguageManager;
 import com.xiaomian124.alcohol.gui.GuiPageCache;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -38,11 +39,13 @@ public class MachineRecipeGUI implements InventoryHolder {
         this.machine = machine;
         this.mode = mode;
         this.player = player;
-        this.recipes = RecipeData.getRecipes(machine);
+        this.recipes = RecipeData.getRecipes(player, machine);
 
         String title = mode == Mode.RECIPES
-                ? machine.displayName + " · 配方"
-                : machine.displayName + " · 合成";
+                ? LanguageManager.getRaw(player, machine.langKey()) + " · "
+                  + LanguageManager.getRaw(player, "gui.recipe_mode")
+                : LanguageManager.getRaw(player, machine.langKey()) + " · "
+                  + LanguageManager.getRaw(player, "gui.craft_mode");
         this.inventory = Bukkit.createInventory(this, SIZE,
                 Component.text(title).color(NamedTextColor.DARK_GRAY));
 
@@ -66,7 +69,7 @@ public class MachineRecipeGUI implements InventoryHolder {
         for (int i = 0; i < SIZE; i++) inventory.setItem(i, black);
 
         if (mode == Mode.CRAFTING) {
-            Map<Integer, ItemStack> m = RecipeData.getCraftingRecipe(machine);
+            Map<Integer, ItemStack> m = RecipeData.getCraftingRecipe(player, machine);
             int[] mapping = {10, 11, 12, 19, 20, 21, 28, 29, 30};
             for (Map.Entry<Integer, ItemStack> e : m.entrySet()) {
                 inventory.setItem(mapping[e.getKey()], e.getValue());
@@ -81,16 +84,20 @@ public class MachineRecipeGUI implements InventoryHolder {
             inventory.setItem(e.getKey(), e.getValue());
         }
 
-        if (page > 0) inventory.setItem(36, ItemFactory.createPrevHead());
+        if (page > 0) inventory.setItem(36, ItemFactory.createPrevHead(player));
         if (page < recipes.size() - 1) {
-            inventory.setItem(44, ItemFactory.createNextHead());
+            inventory.setItem(44, ItemFactory.createNextHead(player));
         }
 
         ItemStack info = new ItemStack(Material.PAPER);
         ItemMeta meta = info.getItemMeta();
-        meta.displayName(ItemFactory.plainName(recipe.name(), NamedTextColor.GOLD));
+        meta.displayName(ItemFactory.plainName(
+                LanguageManager.getRaw(player, recipe.langKey()), NamedTextColor.GOLD));
         meta.lore(List.of(
-                ItemFactory.plainName("第 " + (page + 1) + "/" + recipes.size() + " 条",
+                ItemFactory.plainName(
+                        LanguageManager.getRaw(player, "gui.recipe_index",
+                                "page", String.valueOf(page + 1),
+                                "total", String.valueOf(recipes.size())),
                         NamedTextColor.GRAY)
         ));
         info.setItemMeta(meta);

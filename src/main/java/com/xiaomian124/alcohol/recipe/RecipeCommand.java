@@ -1,7 +1,17 @@
 package com.xiaomian124.alcohol.recipe;
 
 import com.xiaomian124.alcohol.AlcoholPlugin;
+import com.xiaomian124.alcohol.ItemRefresher;
+import com.xiaomian124.alcohol.LanguageManager;
 import com.xiaomian124.alcohol.SpecialEffectManager;
+import com.xiaomian124.alcohol.aging.AgingBarrelGUI;
+import com.xiaomian124.alcohol.aging.AgingBarrelManager;
+import com.xiaomian124.alcohol.apple.ApplePressGUI;
+import com.xiaomian124.alcohol.apple.ApplePressManager;
+import com.xiaomian124.alcohol.brewing.BrewingBoxGUI;
+import com.xiaomian124.alcohol.brewing.BrewingBoxManager;
+import com.xiaomian124.alcohol.cooking.CookingPotGUI;
+import com.xiaomian124.alcohol.cooking.CookingPotManager;
 import com.xiaomian124.alcohol.entity.CatGirlManager;
 import com.xiaomian124.alcohol.give.GiveGUI;
 import com.xiaomian124.alcohol.give.GiveRegistry;
@@ -30,13 +40,15 @@ import java.util.List;
 
 public class RecipeCommand implements CommandExecutor, TabCompleter {
 
-    public static final String PERM_RECIPE = "alcohol.recipe";
-    public static final String PERM_GIVE   = "alcohol.give";
-    public static final String PERM_RELOAD = "alcohol.reload";
-    public static final String PERM_KILL   = "alcohol.kill";
+    public static final String PERM_RECIPE  = "alcohol.recipe";
+    public static final String PERM_GIVE    = "alcohol.give";
+    public static final String PERM_RELOAD  = "alcohol.reload";
+    public static final String PERM_KILL    = "alcohol.kill";
+    public static final String PERM_REFRESH = "alcohol.refresh";
 
     private static final List<String> SUB_COMMANDS_ALL =
-            List.of("recipe", "give", "reload", "kill", "help");
+            List.of("recipe", "give", "reload", "kill", "refresh", "help");
+    private static final List<String> REFRESH_ARGS = List.of("all");
     private static final List<String> MACHINE_NAMES;
     private static final List<String> CRAFT_ARG = List.of("craft");
     private static final List<String> AMOUNT_SUGGEST = List.of("1", "5", "16", "32", "64");
@@ -59,7 +71,7 @@ public class RecipeCommand implements CommandExecutor, TabCompleter {
                              String label, String[] args) {
 
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(Component.text("只有玩家可以使用这个命令")
+            sender.sendMessage(Component.text("Only players can use this command.")
                     .color(NamedTextColor.RED));
             return true;
         }
@@ -73,8 +85,7 @@ public class RecipeCommand implements CommandExecutor, TabCompleter {
 
         if (sub.equals("recipe")) {
             if (!player.hasPermission(PERM_RECIPE)) {
-                player.sendMessage(Component.text("你没有权限使用这个命令")
-                        .color(NamedTextColor.RED));
+                player.sendMessage(LanguageManager.get(player, "cmd.no_permission"));
                 return true;
             }
             return handleRecipe(player, args);
@@ -82,8 +93,7 @@ public class RecipeCommand implements CommandExecutor, TabCompleter {
 
         if (sub.equals("give")) {
             if (!player.hasPermission(PERM_GIVE)) {
-                player.sendMessage(Component.text("你没有权限使用这个命令")
-                        .color(NamedTextColor.RED));
+                player.sendMessage(LanguageManager.get(player, "cmd.no_permission"));
                 return true;
             }
             return handleGive(player, args);
@@ -91,8 +101,7 @@ public class RecipeCommand implements CommandExecutor, TabCompleter {
 
         if (sub.equals("reload")) {
             if (!player.hasPermission(PERM_RELOAD)) {
-                player.sendMessage(Component.text("你没有权限使用这个命令")
-                        .color(NamedTextColor.RED));
+                player.sendMessage(LanguageManager.get(player, "cmd.no_permission"));
                 return true;
             }
             return handleReload(player);
@@ -100,11 +109,18 @@ public class RecipeCommand implements CommandExecutor, TabCompleter {
 
         if (sub.equals("kill")) {
             if (!player.hasPermission(PERM_KILL)) {
-                player.sendMessage(Component.text("你没有权限使用这个命令")
-                        .color(NamedTextColor.RED));
+                player.sendMessage(LanguageManager.get(player, "cmd.no_permission"));
                 return true;
             }
             return handleKill(player, args);
+        }
+
+        if (sub.equals("refresh")) {
+            if (!player.hasPermission(PERM_REFRESH)) {
+                player.sendMessage(LanguageManager.get(player, "cmd.no_permission"));
+                return true;
+            }
+            return handleRefresh(player, args);
         }
 
         if (sub.equals("help")) {
@@ -129,8 +145,8 @@ public class RecipeCommand implements CommandExecutor, TabCompleter {
 
         MachineType type = MachineType.byName(args[1]);
         if (type == null) {
-            player.sendMessage(Component.text("未知机器：" + args[1])
-                    .color(NamedTextColor.RED));
+            player.sendMessage(LanguageManager.get(player,
+                    "cmd.unknown_machine", "name", args[1]));
             sendRecipeUsage(player);
             return true;
         }
@@ -141,12 +157,10 @@ public class RecipeCommand implements CommandExecutor, TabCompleter {
             if (wantsCraft) {
                 MachineRecipeGUI.open(player, type, MachineRecipeGUI.Mode.CRAFTING);
             } else {
-                player.sendMessage(Component.text(
-                                "用法：/alcohol recipe MusicPlayer craft")
-                        .color(NamedTextColor.RED));
-                player.sendMessage(Component.text(
-                                "说明：此功能方块只提供查看其合成方式")
-                        .color(NamedTextColor.RED));
+                player.sendMessage(LanguageManager.get(player,
+                        "cmd.recipe.music_player_usage"));
+                player.sendMessage(LanguageManager.get(player,
+                        "cmd.recipe.music_player_note"));
             }
             return true;
         }
@@ -166,23 +180,21 @@ public class RecipeCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length < 4) {
-            player.sendMessage(Component.text(
-                            "用法：/alcohol give <玩家> <物品> <数量>")
-                    .color(NamedTextColor.RED));
+            player.sendMessage(LanguageManager.get(player, "cmd.give.usage"));
             return true;
         }
 
         Player target = Bukkit.getPlayerExact(args[1]);
         if (target == null) {
-            player.sendMessage(Component.text("玩家不在线：" + args[1])
-                    .color(NamedTextColor.RED));
+            player.sendMessage(LanguageManager.get(player,
+                    "cmd.unknown_player", "name", args[1]));
             return true;
         }
 
         GiveableItem item = GiveRegistry.byId(args[2]);
         if (item == null) {
-            player.sendMessage(Component.text("未知物品：" + args[2])
-                    .color(NamedTextColor.RED));
+            player.sendMessage(LanguageManager.get(player,
+                    "cmd.unknown_item", "name", args[2]));
             return true;
         }
 
@@ -191,19 +203,18 @@ public class RecipeCommand implements CommandExecutor, TabCompleter {
             amount = Integer.parseInt(args[3]);
             if (amount <= 0) throw new NumberFormatException();
         } catch (NumberFormatException e) {
-            player.sendMessage(Component.text("数量必须是正整数")
-                    .color(NamedTextColor.RED));
+            player.sendMessage(LanguageManager.get(player, "cmd.invalid_amount"));
             return true;
         }
 
-        ItemStack stack = item.create();
+        ItemStack stack = item.create(target);
         stack.setAmount(Math.min(amount, stack.getMaxStackSize()));
 
         boolean dropped = false;
         int remaining = amount;
         while (remaining > 0) {
             int give = Math.min(remaining, stack.getMaxStackSize());
-            ItemStack copy = item.create();
+            ItemStack copy = item.create(target);
             copy.setAmount(give);
 
             var leftover = target.getInventory().addItem(copy);
@@ -216,38 +227,31 @@ public class RecipeCommand implements CommandExecutor, TabCompleter {
         }
         target.updateInventory();
 
-        Component giverMsg = Component.text("已将 ")
-                .color(NamedTextColor.GOLD)
-                .append(Component.text(amount).color(NamedTextColor.YELLOW))
-                .append(Component.text(" 个 [").color(NamedTextColor.GOLD))
-                .append(Component.text(item.displayName).color(NamedTextColor.YELLOW))
-                .append(Component.text("] 给予 ").color(NamedTextColor.GOLD))
-                .append(Component.text(target.getName()).color(NamedTextColor.YELLOW));
-        player.sendMessage(giverMsg);
+        player.sendMessage(LanguageManager.get(player, "cmd.give.success",
+                "amount", String.valueOf(amount),
+                "item", item.displayName(player),
+                "player", target.getName()));
 
-        Component targetMsg = Component.text("你被给予了 ")
-                .color(NamedTextColor.GREEN)
-                .append(Component.text(amount).color(NamedTextColor.YELLOW))
-                .append(Component.text(" 个 [").color(NamedTextColor.GREEN))
-                .append(Component.text(item.displayName).color(NamedTextColor.YELLOW))
-                .append(Component.text("] ！").color(NamedTextColor.GREEN));
-        target.sendMessage(targetMsg);
+        target.sendMessage(LanguageManager.get(target, "cmd.give.received",
+                "amount", String.valueOf(amount),
+                "item", item.displayName(target)));
 
         if (dropped) {
-            player.sendMessage(Component.text("目标玩家背包已满，部分物品已掉落在地上。")
-                    .color(NamedTextColor.YELLOW));
-            target.sendMessage(Component.text("你的背包已满，部分物品已掉落在地上。")
-                    .color(NamedTextColor.YELLOW));
+            player.sendMessage(LanguageManager.get(player,
+                    "cmd.give.backpack_full_giver"));
+            target.sendMessage(LanguageManager.get(target,
+                    "cmd.give.backpack_full_target"));
         }
 
         return true;
     }
 
     private boolean handleReload(Player player) {
-        player.sendMessage(Component.text("§e🔄 §3正在重新加载 Alcohol 插件")
-                .color(NamedTextColor.YELLOW));
+        player.sendMessage(LanguageManager.get(player, "cmd.reload.reloading"));
 
         try {
+            String before = LanguageManager.getDefaultLocale();
+
             for (MusicPlayer mp : MusicPlayerManager.getAll()) {
                 if (mp.songPlayer != null) {
                     mp.songPlayer.setPlaying(false);
@@ -264,14 +268,26 @@ public class RecipeCommand implements CommandExecutor, TabCompleter {
 
             MusicPlayerManager.loadDiscs();
 
-            player.sendMessage(Component.text("§a✔ §3Alcohol 插件已重新加载"));
-            player.sendMessage(Component.text("§7- 已加载 "
-                            + MusicPlayerManager.DISCS.size() + " 首nbs音乐")
-                    .color(NamedTextColor.GRAY));
+            plugin.reloadConfig();
+            LanguageManager.init(plugin);
+
+            String after = LanguageManager.getDefaultLocale();
+
+            player.sendMessage(LanguageManager.get(player, "cmd.reload.success"));
+            player.sendMessage(LanguageManager.get(player, "cmd.reload.songs_loaded",
+                    "count", String.valueOf(MusicPlayerManager.DISCS.size())));
+
+            if (!before.equals(after)) {
+                player.sendMessage(LanguageManager.get(player, "cmd.reload.locale_changed",
+                        "locale", after));
+            } else {
+                player.sendMessage(LanguageManager.get(player, "cmd.reload.locale",
+                        "locale", after));
+            }
         } catch (Exception e) {
-            player.sendMessage(Component.text("§c✖ §3Alcohol 插件重新加载失败：" + e.getMessage())
-                    .color(NamedTextColor.RED));
-            plugin.getLogger().warning("重载失败：" + e.getMessage());
+            player.sendMessage(LanguageManager.get(player, "cmd.reload.failed",
+                    "reason", String.valueOf(e.getMessage())));
+            plugin.getLogger().warning("Reload failed: " + e.getMessage());
         }
 
         return true;
@@ -279,10 +295,8 @@ public class RecipeCommand implements CommandExecutor, TabCompleter {
 
     private boolean handleKill(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage(Component.text("用法：/alcohol kill <CatGirl|MaoDie>")
-                    .color(NamedTextColor.RED));
-            player.sendMessage(Component.text("类型：CatGirl, MaoDie")
-                    .color(NamedTextColor.RED));
+            player.sendMessage(LanguageManager.get(player, "cmd.kill.usage"));
+            player.sendMessage(LanguageManager.get(player, "cmd.kill.types"));
             return true;
         }
 
@@ -291,25 +305,23 @@ public class RecipeCommand implements CommandExecutor, TabCompleter {
         int removed;
         if (type.equals("catgirl")) {
             removed = removeEntities(true);
-        } else if (type.equals("maodie") || type.equals("maoDie".toLowerCase())) {
+        } else if (type.equals("maodie")) {
             removed = removeEntities(false);
         } else {
-            player.sendMessage(Component.text("未知类型：" + args[1])
-                    .color(NamedTextColor.RED));
-            player.sendMessage(Component.text("可用类型：CatGirl, MaoDie")
-                    .color(NamedTextColor.RED));
+            player.sendMessage(LanguageManager.get(player,
+                    "cmd.kill.unknown_type", "name", args[1]));
+            player.sendMessage(LanguageManager.get(player,
+                    "cmd.kill.available_types"));
             return true;
         }
 
         if (removed > 0) {
-            player.sendMessage(Component.text("已清除 "
-                            + removed + " 个残留实体")
-                    .color(NamedTextColor.YELLOW));
+            player.sendMessage(LanguageManager.get(player,
+                    "cmd.kill.success", "count", String.valueOf(removed)));
             plugin.getLogger().info(player.getName()
-                    + " 清除了 " + removed + " 个 " + args[1]);
+                    + " removed " + removed + " " + args[1]);
         } else {
-            player.sendMessage(Component.text("没有找到残留实体")
-                    .color(NamedTextColor.RED));
+            player.sendMessage(LanguageManager.get(player, "cmd.kill.none"));
         }
         return true;
     }
@@ -346,32 +358,94 @@ public class RecipeCommand implements CommandExecutor, TabCompleter {
         return count;
     }
 
+    private boolean handleRefresh(Player player, String[] args) {
+        boolean all = args.length >= 2 && args[1].equalsIgnoreCase("all");
+
+        int items = 0;
+        int players = 0;
+
+        if (all) {
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                items += ItemRefresher.refreshPlayer(p);
+                players++;
+            }
+        } else {
+            items += ItemRefresher.refreshPlayer(player);
+            players = 1;
+        }
+
+        int containerItems = refreshMachineContents(player, !all);
+
+        player.sendMessage(LanguageManager.get(player, "cmd.refresh.done",
+                "items", String.valueOf(items),
+                "containers", String.valueOf(containerItems),
+                "players", String.valueOf(players)));
+
+        if (items == 0 && containerItems == 0) {
+            player.sendMessage(LanguageManager.get(player, "cmd.refresh.none"));
+        }
+        return true;
+    }
+
+    private int refreshMachineContents(Player viewer, boolean onlyViewer) {
+        int count = 0;
+
+        for (CookingPotGUI gui : CookingPotManager.getAll()) {
+            if (onlyViewer && !isViewing(viewer, gui)) continue;
+            count += ItemRefresher.refreshContents(
+                    gui.getInventory().getContents(), true);
+        }
+        for (ApplePressGUI gui : ApplePressManager.getAll()) {
+            if (onlyViewer && !isViewing(viewer, gui)) continue;
+            count += ItemRefresher.refreshContents(
+                    gui.getInventory().getContents(), true);
+        }
+        for (AgingBarrelGUI gui : AgingBarrelManager.getAll()) {
+            if (onlyViewer && !isViewing(viewer, gui)) continue;
+            count += ItemRefresher.refreshContents(
+                    gui.getInventory().getContents(), true);
+        }
+        for (BrewingBoxGUI gui : BrewingBoxManager.getAll()) {
+            if (onlyViewer && !isViewing(viewer, gui)) continue;
+            count += ItemRefresher.refreshContents(
+                    gui.getInventory().getContents(), true);
+        }
+        return count;
+    }
+
+    private static boolean isViewing(Player player, org.bukkit.inventory.InventoryHolder holder) {
+        return player.getOpenInventory().getTopInventory().getHolder() == holder;
+    }
+
     private void sendHelp(Player player) {
-        player.sendMessage(Component.text("§7==== §3Alcohol插件帮助列表 §7===="));
-        player.sendMessage(Component.text("§3/alcohol recipe [<type>|<type> craft]"));
-        player.sendMessage(Component.text("§7- 打开合成配方GUI"));
+        player.sendMessage(LanguageManager.get(player, "cmd.help.header"));
+        player.sendMessage(LanguageManager.get(player, "cmd.help.recipe.cmd"));
+        player.sendMessage(LanguageManager.get(player, "cmd.help.recipe.desc"));
         if (player.hasPermission(PERM_GIVE)) {
-            player.sendMessage(Component.text("§3/alcohol give [<player> <item> <amount>]"));
-            player.sendMessage(Component.text("§7- 获取该插件的物品"));
+            player.sendMessage(LanguageManager.get(player, "cmd.help.give.cmd"));
+            player.sendMessage(LanguageManager.get(player, "cmd.help.give.desc"));
         }
         if (player.hasPermission(PERM_KILL)) {
-            player.sendMessage(Component.text("§3/alcohol kill <CatGirl|MaoDie>"));
-            player.sendMessage(Component.text("§7- 清除残留实体"));
+            player.sendMessage(LanguageManager.get(player, "cmd.help.kill.cmd"));
+            player.sendMessage(LanguageManager.get(player, "cmd.help.kill.desc"));
         }
         if (player.hasPermission(PERM_RELOAD)) {
-            player.sendMessage(Component.text("§3/alcohol reload"));
-            player.sendMessage(Component.text("§7- 重新加载插件"));
+            player.sendMessage(LanguageManager.get(player, "cmd.help.reload.cmd"));
+            player.sendMessage(LanguageManager.get(player, "cmd.help.reload.desc"));
         }
-        player.sendMessage(Component.text("§3/alcohol help"));
-        player.sendMessage(Component.text("§7- 显示此帮助列表"));
-        player.sendMessage(Component.text("§7========================"));
+        if (player.hasPermission(PERM_REFRESH)) {
+            player.sendMessage(LanguageManager.get(player, "cmd.help.refresh.cmd"));
+            player.sendMessage(LanguageManager.get(player, "cmd.help.refresh.desc"));
+        }
+        player.sendMessage(LanguageManager.get(player, "cmd.help.help.cmd"));
+        player.sendMessage(LanguageManager.get(player, "cmd.help.help.desc"));
+        player.sendMessage(LanguageManager.get(player, "cmd.help.footer"));
     }
 
     private void sendRecipeUsage(Player player) {
-        player.sendMessage(Component.text("用法：/alcohol recipe <类型>")
-                .color(NamedTextColor.RED));
-        player.sendMessage(Component.text("类型：" + String.join(", ", MACHINE_NAMES))
-                .color(NamedTextColor.RED));
+        player.sendMessage(LanguageManager.get(player, "cmd.recipe.usage"));
+        player.sendMessage(LanguageManager.get(player, "cmd.recipe.types",
+                "types", String.join(", ", MACHINE_NAMES)));
     }
 
     @Override
@@ -386,6 +460,7 @@ public class RecipeCommand implements CommandExecutor, TabCompleter {
             if (player.hasPermission(PERM_GIVE)) subs.add("give");
             if (player.hasPermission(PERM_RELOAD)) subs.add("reload");
             if (player.hasPermission(PERM_KILL)) subs.add("kill");
+            if (player.hasPermission(PERM_REFRESH)) subs.add("refresh");
 
             return StringUtil.copyPartialMatches(args[0], subs, new ArrayList<>());
         }
@@ -418,6 +493,15 @@ public class RecipeCommand implements CommandExecutor, TabCompleter {
             }
             if (args.length == 4) {
                 return StringUtil.copyPartialMatches(args[3], AMOUNT_SUGGEST,
+                        new ArrayList<>());
+            }
+            return Collections.emptyList();
+        }
+
+        if (sub.equals("refresh")) {
+            if (!player.hasPermission(PERM_REFRESH)) return Collections.emptyList();
+            if (args.length == 2) {
+                return StringUtil.copyPartialMatches(args[1], REFRESH_ARGS,
                         new ArrayList<>());
             }
             return Collections.emptyList();

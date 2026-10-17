@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.block.data.type.Leaves;
 
 import java.util.ArrayList;
@@ -126,18 +127,18 @@ public final class CherryManager {
         }
     }
 
-    public static void dropCherryFromHarvest(Block block) {
+    public static void dropCherryFromHarvest(Player player, Block block) {
         block.getWorld().dropItemNaturally(
                 block.getLocation().add(0.5, 0.5, 0.5),
-                ItemFactory.createCherry());
+                ItemFactory.createCherry(player));
         if (ThreadLocalRandom.current().nextDouble() < 0.20) {
             block.getWorld().dropItemNaturally(
                     block.getLocation().add(0.5, 0.5, 0.5),
-                    ItemFactory.createRottenCherry());
+                    ItemFactory.createRottenCherry(player));
         }
     }
 
-    public static void dropCherryFromBreak(Block block, boolean matured) {
+    public static void dropCherryFromBreak(Player player, Block block, boolean matured) {
         double r = ThreadLocalRandom.current().nextDouble();
         if (r < 0.30) {
             block.getWorld().dropItemNaturally(
@@ -148,12 +149,12 @@ public final class CherryManager {
         if (ThreadLocalRandom.current().nextDouble() < cherryChance) {
             block.getWorld().dropItemNaturally(
                     block.getLocation().add(0.5, 0.5, 0.5),
-                    ItemFactory.createCherry());
+                    ItemFactory.createCherry(player));
         }
         if (ThreadLocalRandom.current().nextDouble() < 0.10) {
             block.getWorld().dropItemNaturally(
                     block.getLocation().add(0.5, 0.5, 0.5),
-                    ItemFactory.createRottenCherry());
+                    ItemFactory.createRottenCherry(player));
         }
     }
 

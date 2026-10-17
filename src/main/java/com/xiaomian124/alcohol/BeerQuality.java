@@ -1,27 +1,31 @@
 package com.xiaomian124.alcohol;
 
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.entity.Player;
 
 public enum BeerQuality {
 
-    HIGH     ("高品质", NamedTextColor.GOLD),
-    EXCELLENT("优秀",   NamedTextColor.LIGHT_PURPLE),
-    GOOD     ("良好",   NamedTextColor.YELLOW),
-    MEDIUM   ("中等",   NamedTextColor.DARK_AQUA),
-    NORMAL   ("一般",   NamedTextColor.DARK_GREEN),
-    POOR     ("较差",   NamedTextColor.GREEN),
-    BAD      ("差劲",   NamedTextColor.RED),
-    TERRIBLE ("非常差", NamedTextColor.DARK_RED);
+    HIGH     ("quality.high",     NamedTextColor.GOLD),
+    EXCELLENT("quality.excellent",NamedTextColor.LIGHT_PURPLE),
+    GOOD     ("quality.good",     NamedTextColor.YELLOW),
+    MEDIUM   ("quality.medium",   NamedTextColor.DARK_AQUA),
+    NORMAL   ("quality.normal",   NamedTextColor.DARK_GREEN),
+    POOR     ("quality.poor",     NamedTextColor.GREEN),
+    BAD      ("quality.bad",      NamedTextColor.RED),
+    TERRIBLE ("quality.terrible", NamedTextColor.DARK_RED);
 
-    private final String label;
+    private final String key;
     private final NamedTextColor color;
 
-    BeerQuality(String label, NamedTextColor color) {
-        this.label = label;
+    BeerQuality(String key, NamedTextColor color) {
+        this.key = key;
         this.color = color;
     }
 
-    public String getLabel()   { return label; }
+    public String getLabel(Player player) { return LanguageManager.getRaw(player, key); }
+
+    @Deprecated
+    public String getLabel()   { return LanguageManager.getRaw(null, key); }
     public NamedTextColor getColor() { return color; }
 
     public static BeerQuality fromPenalty(int penalty) {

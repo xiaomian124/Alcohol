@@ -48,6 +48,10 @@ public final class ApplePressManager {
         return new HashSet<>(REGISTERED);
     }
 
+    public static java.util.Collection<ApplePressGUI> getAll() {
+        return new java.util.ArrayList<>(PRESSES.values());
+    }
+
     public static Location parseLocation(String k) {
         String[] parts = k.split(":");
         if (parts.length != 4) return null;

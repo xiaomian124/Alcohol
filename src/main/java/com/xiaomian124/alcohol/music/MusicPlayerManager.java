@@ -1,6 +1,7 @@
 package com.xiaomian124.alcohol.music;
 
 import com.xiaomian124.alcohol.AlcoholPlugin;
+import com.xiaomian124.alcohol.LanguageManager;
 import com.xxmicloxx.NoteBlockAPI.model.Song;
 import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
@@ -62,7 +63,7 @@ public final class MusicPlayerManager {
         File[] files = songsDir.listFiles((dir, name) -> name.endsWith(".nbs"));
         if (files == null || files.length == 0) {
             AlcoholPlugin.getInstance().getLogger()
-                    .warning("没有找到任何nbs文件！请把nbs歌曲放入 "
+                    .warning("No nbs files found! Please put the nbs songs in "
                             + songsDir.getAbsolutePath());
             return;
         }
@@ -78,7 +79,7 @@ public final class MusicPlayerManager {
         }
 
         AlcoholPlugin.getInstance().getLogger()
-                .info("已加载 " + DISCS.size() + " 首nbs音乐");
+                .info("Loaded " + DISCS.size() + " nbs songs!");
     }
 
     private static void releaseBuiltinSongs() {
@@ -111,7 +112,7 @@ public final class MusicPlayerManager {
             }
         } catch (Exception e) {
             AlcoholPlugin.getInstance().getLogger()
-                    .warning("释放内置nbs歌曲失败: " + e.getMessage());
+                    .warning("Failed to release built-in nbs song: " + e.getMessage());
         }
     }
 
@@ -147,13 +148,13 @@ public final class MusicPlayerManager {
                     "songs/" + disc.fileName + ".nbs");
             if (!file.exists()) {
                 AlcoholPlugin.getInstance().getLogger()
-                        .warning("找不到nbs歌曲文件: " + file.getAbsolutePath());
+                        .warning("Can't find the nbs song file: " + file.getAbsolutePath());
                 return null;
             }
             return NBSDecoder.parse(file);
         } catch (Exception e) {
             AlcoholPlugin.getInstance().getLogger()
-                    .warning("加载nbs歌曲失败 " + disc.fileName + ": " + e.getMessage());
+                    .warning("Failed to load nbs song " + disc.fileName + ": " + e.getMessage());
             return null;
         }
     }
@@ -161,7 +162,7 @@ public final class MusicPlayerManager {
     public static void play(MusicPlayer mp, int index) {
         if (DISCS.isEmpty()) {
             AlcoholPlugin.getInstance().getLogger()
-                    .warning("播放失败：nbs歌曲列表为空");
+                    .warning("Playback failed: nbs song list is empty");
             return;
         }
 
@@ -177,7 +178,7 @@ public final class MusicPlayerManager {
         Song song = loadSong(disc);
         if (song == null) {
             AlcoholPlugin.getInstance().getLogger()
-                    .warning("播放失败：无法加载 " + disc.fileName + ".nbs");
+                    .warning("Playback failed: unable to load " + disc.fileName + ".nbs");
             return;
         }
 
@@ -205,16 +206,13 @@ public final class MusicPlayerManager {
         String title = getTitle(mp);
         String author = getAuthor(mp);
 
-        String text = resuming
-                ? "正在继续播放音乐：" + title + " - " + author
-                : "正在播放音乐：" + title + " - " + author;
-
-        Component msg = Component.text(text).color(NamedTextColor.YELLOW);
+        String key = resuming ? "msg.music.resuming" : "msg.music.playing";
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (!p.getWorld().equals(world)) continue;
             if (p.getLocation().distanceSquared(center) > rangeSq) continue;
-            p.sendActionBar(msg);
+            p.sendActionBar(LanguageManager.get(p, key,
+                    "title", title, "author", author));
         }
     }
 
@@ -227,9 +225,6 @@ public final class MusicPlayerManager {
 
         String title = getTitle(mp);
         String author = getAuthor(mp);
-        Component playMsg = Component.text(
-                        "正在播放音乐：" + title + " - " + author)
-                .color(NamedTextColor.YELLOW);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             boolean sameWorld = p.getWorld().equals(center.getWorld());
@@ -239,7 +234,8 @@ public final class MusicPlayerManager {
 
             if (inRange && !alreadyAdded) {
                 player.addPlayer(p);
-                p.sendActionBar(playMsg);
+                p.sendActionBar(LanguageManager.get(p, "msg.music.playing",
+                        "title", title, "author", author));
             } else if (!inRange && alreadyAdded) {
                 player.removePlayer(p);
             }
@@ -263,12 +259,10 @@ public final class MusicPlayerManager {
         Location center = mp.location.clone().add(0.5, 0.5, 0.5);
         double rangeSq = (double) BROADCAST_RANGE * BROADCAST_RANGE;
 
-        Component msg = Component.text("音乐已暂停").color(NamedTextColor.YELLOW);
-
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (!p.getWorld().equals(world)) continue;
             if (p.getLocation().distanceSquared(center) > rangeSq) continue;
-            p.sendActionBar(msg);
+            p.sendActionBar(LanguageManager.get(p, "msg.music.paused"));
         }
     }
 
@@ -312,7 +306,7 @@ public final class MusicPlayerManager {
     public static String getTitle(MusicPlayer mp) {
         if (mp.currentSong == null) {
             MusicDisc d = DISCS.isEmpty() ? null : DISCS.get(mp.currentIndex);
-            return d != null ? d.displayName : "未知歌曲";
+            return d != null ? d.displayName : LanguageManager.getRaw(null, "music.unknown");
         }
         String title = mp.currentSong.getTitle();
         if (title == null || title.isEmpty()

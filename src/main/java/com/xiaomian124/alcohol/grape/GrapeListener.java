@@ -2,6 +2,7 @@ package com.xiaomian124.alcohol.grape;
 
 import com.xiaomian124.alcohol.AlcoholPlugin;
 import com.xiaomian124.alcohol.ItemFactory;
+import com.xiaomian124.alcohol.LanguageManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
@@ -64,78 +65,72 @@ public class GrapeListener implements Listener {
         if (action != Action.RIGHT_CLICK_BLOCK && action != Action.RIGHT_CLICK_AIR) return;
 
         Player player = event.getPlayer();
-        ItemStack mainHand = player.getInventory().getItemInMainHand();
-        ItemStack offHand = player.getInventory().getItemInOffHand();
+        Block clicked = event.getClickedBlock();
+        ItemStack hand = event.getItem();
 
-        ItemStack hand;
-        if (slot == EquipmentSlot.HAND) {
-            if (mainHand.getType() != Material.AIR) {
-                hand = mainHand;
-            } else if (offHand.getType() != Material.AIR) {
-                return;
-            } else {
-                hand = null;
-            }
-        } else if (slot == EquipmentSlot.OFF_HAND) {
-            if (mainHand.getType() != Material.AIR) return;
-            hand = offHand;
-            if (hand.getType() == Material.AIR) return;
-        } else {
-            return;
-        }
+        if (action == Action.RIGHT_CLICK_BLOCK && clicked != null) {
+            GrapePlant plant = GrapeManager.findByBlock(clicked.getLocation());
+            if (plant != null) {
+                event.setCancelled(true);
 
-        if (hand != null && hand.getType() != Material.AIR) {
+                if (slot != EquipmentSlot.HAND) return;
 
-            if (ItemFactory.getGrapeType(hand) != null) {
-                if (action == Action.RIGHT_CLICK_BLOCK) {
-                    event.setCancelled(true);
-                }
-                return;
-            }
+                ItemStack mainHand = player.getInventory().getItemInMainHand();
+                ItemStack offHand = player.getInventory().getItemInOffHand();
 
-            if (action == Action.RIGHT_CLICK_BLOCK) {
-                Block block = event.getClickedBlock();
-                if (block == null) return;
+                ItemStack useBone = null;
+                if (mainHand.getType() == Material.BONE_MEAL) useBone = mainHand;
+                else if (offHand.getType() == Material.BONE_MEAL) useBone = offHand;
 
-                GrapeType seedType = ItemFactory.getGrapeSeedType(hand);
-                if (seedType != null) {
-                    event.setCancelled(true);
-                    handlePlant(player, hand, block, event.getBlockFace(), seedType);
-                    return;
-                }
-
-                if (hand.getType() == Material.BONE_MEAL) {
-                    GrapePlant plant = GrapeManager.findByBlock(block.getLocation());
-                    if (plant == null) return;
-
-                    event.setCancelled(true);
-
+                if (useBone != null) {
                     if (GrapeManager.fertilize(plant)) {
-                        block.getWorld().spawnParticle(Particle.HAPPY_VILLAGER,
-                                block.getLocation().add(0.5, 0.5, 0.5),
+                        clicked.getWorld().spawnParticle(Particle.HAPPY_VILLAGER,
+                                clicked.getLocation().add(0.5, 0.5, 0.5),
                                 8, 0.3, 0.3, 0.3, 0);
-                        block.getWorld().playSound(block.getLocation(),
+                        clicked.getWorld().playSound(clicked.getLocation(),
                                 Sound.ITEM_BONE_MEAL_USE, 1.0f, 1.0f);
                         if (player.getGameMode() != GameMode.CREATIVE) {
-                            hand.setAmount(hand.getAmount() - 1);
+                            useBone.setAmount(useBone.getAmount() - 1);
                         }
                     }
                     return;
                 }
+
+                if (ItemFactory.getGrapeSeedType(mainHand) != null
+                        || ItemFactory.getGrapeSeedType(offHand) != null) {
+                    return;
+                }
+
+                if (ItemFactory.getGrapeType(mainHand) != null
+                        || ItemFactory.getGrapeType(offHand) != null) {
+                    return;
+                }
+
+                if (GrapeManager.isRipe(plant)) {
+                    harvest(player, plant, clicked);
+                }
+                return;
             }
         }
 
+        if (hand == null || hand.getType() == Material.AIR) return;
+
+        if (ItemFactory.getGrapeType(hand) != null) {
+            if (action == Action.RIGHT_CLICK_BLOCK) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+
         if (action != Action.RIGHT_CLICK_BLOCK) return;
+        if (clicked == null) return;
 
-        Block block = event.getClickedBlock();
-        if (block == null) return;
-
-        GrapePlant plant = GrapeManager.findByBlock(block.getLocation());
-        if (plant == null) return;
-
-        event.setCancelled(true);
-        if (!GrapeManager.isRipe(plant)) return;
-        harvest(player, plant, block);
+        GrapeType seedType = ItemFactory.getGrapeSeedType(hand);
+        if (seedType != null) {
+            event.setCancelled(true);
+            handlePlant(player, hand, clicked, event.getBlockFace(), seedType);
+            return;
+        }
     }
 
     private void handlePlant(Player player, ItemStack seed, Block clicked,
@@ -280,8 +275,8 @@ public class GrapeListener implements Listener {
             ItemStack seed = ItemFactory.createGrapeSeed(type);
             player.getInventory().addItem(seed).forEach((i, drop) ->
                     player.getWorld().dropItemNaturally(player.getLocation(), drop));
-            player.sendActionBar(Component.text("你在葡萄里吃出了" + type.getSeedName())
-                    .color(NamedTextColor.YELLOW));
+            player.sendActionBar(LanguageManager.get(player, "msg.grape.found_seed",
+                    "seed", type.getSeedName()));
         }
     }
 

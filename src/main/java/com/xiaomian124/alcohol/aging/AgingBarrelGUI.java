@@ -4,6 +4,7 @@ import com.xiaomian124.alcohol.AlcoholPlugin;
 import com.xiaomian124.alcohol.BeerQuality;
 import com.xiaomian124.alcohol.BeerType;
 import com.xiaomian124.alcohol.ItemFactory;
+import com.xiaomian124.alcohol.LanguageManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -46,7 +47,8 @@ public class AgingBarrelGUI implements InventoryHolder {
         this.plugin = plugin;
         this.block = block;
         this.inventory = Bukkit.createInventory(this, SIZE,
-                Component.text("陈酿桶").color(NamedTextColor.DARK_GRAY));
+                Component.text(LanguageManager.getRaw(null, "machine.aging_barrel.name"))
+                        .color(NamedTextColor.DARK_GRAY));
         fillBackground();
         updateHeads();
         updateStorageDisplay();
@@ -259,16 +261,21 @@ public class AgingBarrelGUI implements InventoryHolder {
     private void updateStorageDisplay() {
         ItemStack pane;
         ItemMeta meta;
+        Player viewer = getViewer();
 
         if (storagePercent <= 0 || storageType == null) {
             pane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
             meta = pane.getItemMeta();
-            meta.displayName(ItemFactory.plainName("酒量储存为空", NamedTextColor.RED));
+            meta.displayName(ItemFactory.plainName(
+                    LanguageManager.getRaw(viewer, "gui.aging_barrel.storage_empty"),
+                    NamedTextColor.RED));
         } else {
             pane = new ItemStack(Material.BROWN_STAINED_GLASS_PANE);
             meta = pane.getItemMeta();
             meta.displayName(ItemFactory.plainName(
-                    storageType.getDisplayName() + "：" + storagePercent + "%",
+                    LanguageManager.getRaw(viewer, "gui.aging_barrel.storage",
+                            "type", storageType.getDisplayName(),
+                            "percent", String.valueOf(storagePercent)),
                     NamedTextColor.GOLD));
         }
         pane.setItemMeta(meta);
@@ -276,12 +283,13 @@ public class AgingBarrelGUI implements InventoryHolder {
     }
 
     private void updateHeads() {
-        inventory.setItem(HEAD_1_SLOT, ItemFactory.createTimerHeadIdle());
+        Player viewer = getViewer();
+        inventory.setItem(HEAD_1_SLOT, ItemFactory.createTimerHeadIdle(viewer));
 
         if (agingRemaining > 0) {
-            inventory.setItem(HEAD_2_SLOT, ItemFactory.createTimerHead2(agingRemaining));
+            inventory.setItem(HEAD_2_SLOT, ItemFactory.createTimerHead2(viewer, agingRemaining));
         } else {
-            inventory.setItem(HEAD_2_SLOT, ItemFactory.createTimerHeadIdle2());
+            inventory.setItem(HEAD_2_SLOT, ItemFactory.createTimerHeadIdle2(viewer));
         }
     }
 
@@ -311,6 +319,17 @@ public class AgingBarrelGUI implements InventoryHolder {
             }
         }
         return null;
+    }
+
+    public static int[] getDropSlots() {
+        return new int[]{
+                WINE_INPUT_SLOT,
+                INGREDIENT_1_SLOT,
+                INGREDIENT_2_SLOT,
+                INGREDIENT_3_SLOT,
+                GLASS_INPUT_SLOT,
+                WINE_OUTPUT_SLOT
+        };
     }
 
     public Block getBlock() { return block; }

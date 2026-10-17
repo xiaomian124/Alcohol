@@ -13,6 +13,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -71,10 +72,19 @@ public final class ItemFactory {
         item.setItemMeta(meta);
     }
 
+    private static void name(ItemStack item, Player player, String langKey,
+                             NamedTextColor color) {
+        name(item, lang(langKey), color);
+    }
+
     private static void name(ItemStack item, String text, NamedTextColor color) {
         ItemMeta meta = item.getItemMeta();
         meta.displayName(plainName(text, color));
         item.setItemMeta(meta);
+    }
+
+    private static void lore(ItemStack item, Player player, String langKey) {
+        lore(item, lang(langKey));
     }
 
     private static void lore(ItemStack item, String text) {
@@ -84,6 +94,14 @@ public final class ItemFactory {
         list.add(plainName(text, NamedTextColor.GRAY));
         meta.lore(list);
         item.setItemMeta(meta);
+    }
+
+    public static String lang(Player player, String key) {
+        return LanguageManager.getRaw(player, key);
+    }
+
+    public static String lang(String key) {
+        return LanguageManager.getRaw(null, key);
     }
 
     public static void applyBeerSkin(SkullMeta meta, BeerType type) {
@@ -146,97 +164,144 @@ public final class ItemFactory {
         }
     }
 
-    public static ItemStack createPrevHead() {
+    public static ItemStack createPrevHead(Player player) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
         applySkin(meta,
                 UUID.nameUUIDFromBytes("alcohol:prev".getBytes(StandardCharsets.UTF_8)),
                 PREV_HEAD_TEXTURE);
-        meta.displayName(plainName("上一页", NamedTextColor.YELLOW));
+        meta.displayName(plainName(lang("gui.prev_page"), NamedTextColor.YELLOW));
         meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         head.setItemMeta(meta);
         return head;
     }
 
-    public static ItemStack createNextHead() {
+    @Deprecated
+    public static ItemStack createPrevHead() {
+        return createPrevHead(null);
+    }
+
+    public static ItemStack createNextHead(Player player) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
         applySkin(meta,
                 UUID.nameUUIDFromBytes("alcohol:next".getBytes(StandardCharsets.UTF_8)),
                 NEXT_HEAD_TEXTURE);
-        meta.displayName(plainName("下一页", NamedTextColor.YELLOW));
+        meta.displayName(plainName(lang("gui.next_page"), NamedTextColor.YELLOW));
         meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         head.setItemMeta(meta);
         return head;
     }
 
-    public static ItemStack createPlayPauseHead(boolean playing) {
+    @Deprecated
+    public static ItemStack createNextHead() {
+        return createNextHead(null);
+    }
+
+    public static ItemStack createPlayPauseHead(Player player, boolean playing) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
         applySkin(meta, PLAY_PAUSE_HEAD_UUID, PLAY_PAUSE_HEAD_TEXTURE);
-        meta.displayName(plainName(playing ? "暂停" : "播放", NamedTextColor.YELLOW));
+        meta.displayName(plainName(
+                lang(playing ? "gui.pause" : "gui.play"),
+                NamedTextColor.YELLOW));
         meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         head.setItemMeta(meta);
         return head;
     }
 
-    public static ItemStack createDryWheat() {
+    @Deprecated
+    public static ItemStack createPlayPauseHead(boolean playing) {
+        return createPlayPauseHead(null, playing);
+    }
+
+    public static ItemStack createDryWheat(Player player) {
         ItemStack item = new ItemStack(Material.WHEAT);
-        name(item, "烘干的小麦", NamedTextColor.WHITE);
-        lore(item, "烘干后的小麦，散发着独特的香味");
+        name(item, player, "item.dry_wheat.name", NamedTextColor.WHITE);
+        lore(item, player, "item.dry_wheat.lore");
         mark(item, ItemKeys.DRY_WHEAT);
         return item;
     }
 
-    public static ItemStack createBarley() {
+    @Deprecated
+    public static ItemStack createDryWheat() {
+        return createDryWheat(null);
+    }
+
+    public static ItemStack createBarley(Player player) {
         ItemStack item = new ItemStack(Material.WHEAT);
-        name(item, "大麦", NamedTextColor.WHITE);
-        lore(item, "一种古老的禾本科谷物，广泛用于食品");
+        name(item, player, "item.barley.name", NamedTextColor.WHITE);
+        lore(item, player, "item.barley.lore");
         mark(item, ItemKeys.BARLEY);
         return item;
     }
 
-    public static ItemStack createDriedBarley() {
+    @Deprecated
+    public static ItemStack createBarley() {
+        return createBarley(null);
+    }
+
+    public static ItemStack createDriedBarley(Player player) {
         ItemStack item = new ItemStack(Material.WHEAT);
-        name(item, "烘干的大麦", NamedTextColor.WHITE);
-        lore(item, "烘干后的大麦，散发着独特的香味");
+        name(item, player, "item.dried_barley.name", NamedTextColor.WHITE);
+        lore(item, player, "item.dried_barley.lore");
         mark(item, ItemKeys.DRIED_BARLEY);
         return item;
     }
 
-    public static ItemStack createOats() {
+    @Deprecated
+    public static ItemStack createDriedBarley() {
+        return createDriedBarley(null);
+    }
+
+    public static ItemStack createOats(Player player) {
         ItemStack item = new ItemStack(Material.WHEAT);
-        name(item, "燕麦", NamedTextColor.WHITE);
-        lore(item, "一种禾本科植物结出的谷物，广泛种植于温带地区");
+        name(item, player, "item.oats.name", NamedTextColor.WHITE);
+        lore(item, player, "item.oats.lore");
         mark(item, ItemKeys.OATS);
         return item;
     }
 
-    public static ItemStack createDriedOats() {
+    @Deprecated
+    public static ItemStack createOats() {
+        return createOats(null);
+    }
+
+    public static ItemStack createDriedOats(Player player) {
         ItemStack item = new ItemStack(Material.WHEAT);
-        name(item, "烘干的燕麦", NamedTextColor.WHITE);
-        lore(item, "烘干后的燕麦，散发着独特的香味");
+        name(item, player, "item.dried_oats.name", NamedTextColor.WHITE);
+        lore(item, player, "item.dried_oats.lore");
         mark(item, ItemKeys.DRIED_OATS);
         return item;
     }
 
-    public static ItemStack createCornSeed() {
+    @Deprecated
+    public static ItemStack createDriedOats() {
+        return createDriedOats(null);
+    }
+
+    public static ItemStack createCornSeed(Player player) {
         ItemStack item = new ItemStack(Material.PUMPKIN_SEEDS);
-        name(item, "玉米种子", NamedTextColor.WHITE);
-        lore(item, "种在耕地上可以长出玉米");
+        name(item, player, "item.corn_seed.name", NamedTextColor.WHITE);
+        lore(item, player, "item.corn_seed.lore");
         mark(item, ItemKeys.CORN_SEED);
         return item;
     }
 
-    public static ItemStack createCorn() {
+    @Deprecated
+    public static ItemStack createCornSeed() {
+        return createCornSeed(null);
+    }
+
+    public static ItemStack createCorn(Player player) {
         ItemStack item = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) item.getItemMeta();
         applySkin(meta, CORN_UUID, CORN_TEXTURE);
-        meta.displayName(plainName("玉米", NamedTextColor.WHITE));
+        meta.displayName(plainName(lang("item.corn.name"), NamedTextColor.WHITE));
         meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         meta.lore(List.of(
-                plainName("金黄色的玉米棒，可以合成玉米粒", NamedTextColor.GRAY),
-                plainName("食用可恢复 3.5 点饥饿值", NamedTextColor.GRAY)
+                plainName(lang("item.corn.lore_1"), NamedTextColor.GRAY),
+                plainName(lang("item.corn.lore_2"), NamedTextColor.GRAY)
         ));
         meta.getPersistentDataContainer().set(
                 ItemKeys.CORN, PersistentDataType.BYTE, (byte) 1);
@@ -246,93 +311,153 @@ public final class ItemFactory {
         return item;
     }
 
-    public static ItemStack createCornKernels() {
+    @Deprecated
+    public static ItemStack createCorn() {
+        return createCorn(null);
+    }
+
+    public static ItemStack createCornKernels(Player player) {
         ItemStack item = new ItemStack(Material.BEETROOT_SEEDS);
-        name(item, "玉米粒", NamedTextColor.WHITE);
-        lore(item, "从玉米上剥下的金黄色颗粒");
+        name(item, player, "item.corn_kernels.name", NamedTextColor.WHITE);
+        lore(item, player, "item.corn_kernels.lore");
         mark(item, ItemKeys.CORN_KERNELS);
         return item;
     }
 
-    public static ItemStack createDriedCorn() {
+    @Deprecated
+    public static ItemStack createCornKernels() {
+        return createCornKernels(null);
+    }
+
+    public static ItemStack createDriedCorn(Player player) {
         ItemStack item = new ItemStack(Material.BEETROOT_SEEDS);
-        name(item, "烘干的玉米粒", NamedTextColor.WHITE);
-        lore(item, "烘干后的玉米粒，散发着甜香");
+        name(item, player, "item.dried_corn.name", NamedTextColor.WHITE);
+        lore(item, player, "item.dried_corn.lore");
         mark(item, ItemKeys.DRIED_CORN);
         return item;
     }
 
-    public static ItemStack createWildNettle() {
+    @Deprecated
+    public static ItemStack createDriedCorn() {
+        return createDriedCorn(null);
+    }
+
+    public static ItemStack createWildNettle(Player player) {
         ItemStack item = new ItemStack(Material.FERN);
-        name(item, "野生荨麻", NamedTextColor.WHITE);
-        lore(item, "一种靠地下根茎和种子自然繁殖，耐寒又耐旱");
+        name(item, player, "item.wild_nettle.name", NamedTextColor.WHITE);
+        lore(item, player, "item.wild_nettle.lore");
         mark(item, ItemKeys.WILD_NETTLE);
         return item;
     }
 
-    public static ItemStack createHops() {
+    @Deprecated
+    public static ItemStack createWildNettle() {
+        return createWildNettle(null);
+    }
+
+    public static ItemStack createHops(Player player) {
         ItemStack item = new ItemStack(Material.WHEAT_SEEDS);
-        name(item, "啤酒花", NamedTextColor.WHITE);
-        lore(item, "一种多年生缠绕草本植物，可用于酿造啤酒");
+        name(item, player, "item.hops.name", NamedTextColor.WHITE);
+        lore(item, player, "item.hops.lore");
         mark(item, ItemKeys.HOPS);
         return item;
     }
 
-    public static ItemStack createYeast() {
+    @Deprecated
+    public static ItemStack createHops() {
+        return createHops(null);
+    }
+
+    public static ItemStack createYeast(Player player) {
         ItemStack item = new ItemStack(Material.SUGAR);
-        name(item, "酵母", NamedTextColor.WHITE);
-        lore(item, "能发酵糖类的各种单细胞真菌，可用于酿造生产");
+        name(item, player, "item.yeast.name", NamedTextColor.WHITE);
+        lore(item, player, "item.yeast.lore");
         mark(item, ItemKeys.YEAST);
         return item;
     }
 
-    public static ItemStack createHarvestShears() {
+    @Deprecated
+    public static ItemStack createYeast() {
+        return createYeast(null);
+    }
+
+    public static ItemStack createHarvestShears(Player player) {
         ItemStack item = new ItemStack(Material.SHEARS);
-        name(item, "收割剪刀", NamedTextColor.YELLOW);
-        lore(item, "可以采集一些农作物");
+        name(item, player, "item.harvest_shears.name", NamedTextColor.YELLOW);
+        lore(item, player, "item.harvest_shears.lore");
         mark(item, ItemKeys.HARVEST_SHEARS);
         return item;
     }
 
-    public static ItemStack createCookingPot() {
+    @Deprecated
+    public static ItemStack createHarvestShears() {
+        return createHarvestShears(null);
+    }
+
+    public static ItemStack createCookingPot(Player player) {
         ItemStack item = new ItemStack(Material.CAULDRON);
-        name(item, "烹饪锅", NamedTextColor.YELLOW);
-        lore(item, "试试你的拿手菜吧");
+        name(item, player, "item.cooking_pot.name", NamedTextColor.YELLOW);
+        lore(item, player, "item.cooking_pot.lore");
         mark(item, ItemKeys.COOKING_POT);
         return item;
     }
 
-    public static ItemStack createBrewingBox() {
+    @Deprecated
+    public static ItemStack createCookingPot() {
+        return createCookingPot(null);
+    }
+
+    public static ItemStack createBrewingBox(Player player) {
         ItemStack item = new ItemStack(Material.SMOKER);
-        name(item, "酿造炉", NamedTextColor.YELLOW);
-        lore(item, "尝试酿造好喝啤酒");
+        name(item, player, "item.brewing_box.name", NamedTextColor.YELLOW);
+        lore(item, player, "item.brewing_box.lore");
         mark(item, ItemKeys.BREWING_BOX);
         return item;
     }
 
-    public static ItemStack createApplePress() {
+    @Deprecated
+    public static ItemStack createBrewingBox() {
+        return createBrewingBox(null);
+    }
+
+    public static ItemStack createApplePress(Player player) {
         ItemStack item = new ItemStack(Material.LOOM);
-        name(item, "苹果压榨器", NamedTextColor.YELLOW);
-        lore(item, "把苹果压榨成苹果泥和苹果汁");
+        name(item, player, "item.apple_press.name", NamedTextColor.YELLOW);
+        lore(item, player, "item.apple_press.lore");
         mark(item, ItemKeys.APPLE_PRESS);
         return item;
     }
 
-    public static ItemStack createAppleMash() {
+    @Deprecated
+    public static ItemStack createApplePress() {
+        return createApplePress(null);
+    }
+
+    public static ItemStack createAppleMash(Player player) {
         ItemStack item = new ItemStack(Material.BROWN_DYE);
-        name(item, "苹果泥", NamedTextColor.YELLOW);
-        lore(item, "压碎的苹果果肉");
+        name(item, player, "item.apple_mash.name", NamedTextColor.YELLOW);
+        lore(item, player, "item.apple_mash.lore");
         mark(item, ItemKeys.APPLE_MASH);
         return item;
     }
 
-    public static ItemStack createAppleJuice() {
+    @Deprecated
+    public static ItemStack createAppleMash() {
+        return createAppleMash(null);
+    }
+
+    public static ItemStack createAppleJuice(Player player) {
         ItemStack item = createBeer(BeerType.APPLE_JUICE, BeerQuality.HIGH);
         ItemMeta meta = item.getItemMeta();
         meta.getPersistentDataContainer().set(
                 ItemKeys.APPLE_JUICE, PersistentDataType.BYTE, (byte) 1);
         item.setItemMeta(meta);
         return item;
+    }
+
+    @Deprecated
+    public static ItemStack createAppleJuice() {
+        return createAppleJuice(null);
     }
 
     public static boolean isAppleMash(ItemStack item) {
@@ -343,49 +468,86 @@ public final class ItemFactory {
         return isCustom(item, ItemKeys.APPLE_JUICE);
     }
 
-    public static ItemStack createAgingBarrel() {
+    public static ItemStack createAgingBarrel(Player player) {
         ItemStack item = new ItemStack(Material.BARREL);
-        name(item, "陈酿桶", NamedTextColor.YELLOW);
-        lore(item, "把酒放入桶中慢慢陈酿");
+        name(item, player, "item.aging_barrel.name", NamedTextColor.YELLOW);
+        lore(item, player, "item.aging_barrel.lore");
         mark(item, ItemKeys.AGING_BARREL);
         return item;
     }
 
-    public static ItemStack createGrapeBasin() {
+    @Deprecated
+    public static ItemStack createAgingBarrel() {
+        return createAgingBarrel(null);
+    }
+
+    public static ItemStack createGrapeBasin(Player player) {
         ItemStack item = new ItemStack(Material.COMPOSTER);
-        name(item, "葡萄藤盆", NamedTextColor.YELLOW);
-        lore(item, "脚踩榨取葡萄汁，保持葡萄汁的纯净度和口感");
+        name(item, player, "item.grape_basin.name", NamedTextColor.YELLOW);
+        lore(item, player, "item.grape_basin.lore");
         mark(item, ItemKeys.GRAPE_BASIN);
         return item;
     }
 
-    public static ItemStack createMusicPlayer() {
+    @Deprecated
+    public static ItemStack createGrapeBasin() {
+        return createGrapeBasin(null);
+    }
+
+    public static ItemStack createMusicPlayer(Player player) {
         ItemStack item = new ItemStack(Material.JUKEBOX);
-        name(item, "吧台音乐播放器", NamedTextColor.YELLOW);
-        lore(item, "在你的酒吧里播放一些音乐");
+        name(item, player, "item.music_player.name", NamedTextColor.YELLOW);
+        lore(item, player, "item.music_player.lore");
         mark(item, ItemKeys.MUSIC_PLAYER);
         return item;
     }
 
-    public static ItemStack createGrapeSeed(GrapeType type) {
+    @Deprecated
+    public static ItemStack createMusicPlayer() {
+        return createMusicPlayer(null);
+    }
+
+    public static ItemStack createGrapeSeed(Player player, GrapeType type) {
         ItemStack item = new ItemStack(type.getSeedMaterial());
-        name(item, type.getSeedName(), NamedTextColor.WHITE);
-        lore(item, type.getLore());
+        name(item, lang(type.seedNameKey()), NamedTextColor.WHITE);
+        lore(item, lang(type.loreKey()));
         mark(item, type.getSeedKey());
         return item;
     }
 
-    public static ItemStack createGrape(GrapeType type) {
+    public static org.bukkit.profile.PlayerProfile cornHeadProfile() {
+        PlayerProfile profile = Bukkit.createPlayerProfile(CORN_UUID);
+        PlayerTextures textures = profile.getTextures();
+        try {
+            textures.setSkin(new URL(extractTextureUrl(CORN_TEXTURE)));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        profile.setTextures(textures);
+        return profile;
+    }
+
+    @Deprecated
+    public static ItemStack createGrapeSeed(GrapeType type) {
+        return createGrapeSeed(null, type);
+    }
+
+    public static ItemStack createGrape(Player player, GrapeType type) {
         ItemStack item = new ItemStack(type.getGrapeMaterial());
-        name(item, type.getGrapeName(), NamedTextColor.WHITE);
-        lore(item, type.getLore());
-        lore(item, "食用可恢复 2 点饥饿值");
-        lore(item, "有几率获得葡萄种子");
+        name(item, lang(type.grapeNameKey()), NamedTextColor.WHITE);
+        lore(item, lang(type.loreKey()));
+        lore(item, lang("item.grape.lore_1"));
+        lore(item, lang("item.grape.lore_2"));
         mark(item, type.getGrapeKey());
 
         applyFood(item, 2, 1.0f);
 
         return item;
+    }
+
+    @Deprecated
+    public static ItemStack createGrape(GrapeType type) {
+        return createGrape(null, type);
     }
 
     public static GrapeType getGrapeSeedType(ItemStack item) {
@@ -410,12 +572,12 @@ public final class ItemFactory {
         return null;
     }
 
-    public static ItemStack createCherry() {
+    public static ItemStack createCherry(Player player) {
         ItemStack item = new ItemStack(Material.SWEET_BERRIES);
-        name(item, "樱桃", NamedTextColor.WHITE);
-        lore(item, "鲜红饱满的果实，可用于陈酿酒");
-        lore(item, "可右键种植到地面");
-        lore(item, "食用可恢复 2 点饥饿值");
+        name(item, player, "item.cherry.name", NamedTextColor.WHITE);
+        lore(item, player, "item.cherry.lore_1");
+        lore(item, player, "item.cherry.lore_2");
+        lore(item, player, "item.cherry.lore_3");
         mark(item, ItemKeys.CHERRY);
 
         applyFood(item, 2, 1.4f);
@@ -423,16 +585,26 @@ public final class ItemFactory {
         return item;
     }
 
-    public static ItemStack createRottenCherry() {
+    @Deprecated
+    public static ItemStack createCherry() {
+        return createCherry(null);
+    }
+
+    public static ItemStack createRottenCherry(Player player) {
         ItemStack item = new ItemStack(Material.SWEET_BERRIES);
-        name(item, "腐烂的樱桃", NamedTextColor.WHITE);
-        lore(item, "已经腐坏的樱桃，散发出一股恶臭");
-        lore(item, "食用可恢复 1 点饥饿值");
+        name(item, player, "item.rotten_cherry.name", NamedTextColor.WHITE);
+        lore(item, player, "item.rotten_cherry.lore_1");
+        lore(item, player, "item.rotten_cherry.lore_2");
         mark(item, ItemKeys.ROTTEN_CHERRY);
 
         applyFood(item, 1, 1.0f);
 
         return item;
+    }
+
+    @Deprecated
+    public static ItemStack createRottenCherry() {
+        return createRottenCherry(null);
     }
 
     public static boolean isCherry(ItemStack item) {
@@ -443,15 +615,25 @@ public final class ItemFactory {
         return isCustom(item, ItemKeys.ROTTEN_CHERRY);
     }
 
+    public static ItemStack createWheatBeer(Player player) {
+        return createBeer(player, BeerType.WHEAT_BEER, BeerQuality.HIGH);
+    }
+
+    @Deprecated
     public static ItemStack createWheatBeer() {
-        return createBeer(BeerType.WHEAT_BEER, BeerQuality.HIGH);
+        return createWheatBeer((Player) null);
     }
 
+    public static ItemStack createWheatBeer(Player player, BeerQuality quality) {
+        return createBeer(player, BeerType.WHEAT_BEER, quality);
+    }
+
+    @Deprecated
     public static ItemStack createWheatBeer(BeerQuality quality) {
-        return createBeer(BeerType.WHEAT_BEER, quality);
+        return createWheatBeer(null, quality);
     }
 
-    public static ItemStack createBeer(BeerType type, BeerQuality quality) {
+    public static ItemStack createBeer(Player player, BeerType type, BeerQuality quality) {
         ItemStack item = new ItemStack(type.getMaterial());
         ItemMeta meta = item.getItemMeta();
 
@@ -463,13 +645,13 @@ public final class ItemFactory {
             potionMeta.setMaxStackSize(64);
         }
 
-        meta.displayName(plainName(type.getDisplayName(), NamedTextColor.YELLOW));
+        meta.displayName(plainName(lang(type.getNameKey()), NamedTextColor.YELLOW));
 
         List<Component> loreList = new ArrayList<>();
-        loreList.add(plainName(type.getLoreLine(), NamedTextColor.GRAY));
+        loreList.add(plainName(lang(type.getLoreKey()), NamedTextColor.GRAY));
 
         if (type.hasQuality()) {
-            loreList.add(plainName("品质：", NamedTextColor.GRAY)
+            loreList.add(plainName(lang("lore.quality_prefix"), NamedTextColor.GRAY)
                     .append(Component.text(quality.getLabel())
                             .color(quality.getColor())
                             .decoration(TextDecoration.ITALIC, false)));
@@ -489,6 +671,11 @@ public final class ItemFactory {
 
         item.setItemMeta(meta);
         return item;
+    }
+
+    @Deprecated
+    public static ItemStack createBeer(BeerType type, BeerQuality quality) {
+        return createBeer(null, type, quality);
     }
 
     public static boolean isBeer(ItemStack item) {
@@ -516,28 +703,38 @@ public final class ItemFactory {
         catch (IllegalArgumentException e) { return BeerQuality.HIGH; }
     }
 
+    public static ItemStack createTimerHead(Player player, int remainingTicks) {
+        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta meta = (SkullMeta) head.getItemMeta();
+        applySkin(meta, TIMER_HEAD_UUID, TIMER_HEAD_TEXTURE);
+        int seconds = (remainingTicks + 19) / 20;
+        meta.displayName(plainName(seconds + "s", NamedTextColor.YELLOW));
+        meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+        head.setItemMeta(meta);
+        return head;
+    }
+
+    @Deprecated
     public static ItemStack createTimerHead(int remainingTicks) {
+        return createTimerHead(null, remainingTicks);
+    }
+
+    public static ItemStack createTimerHeadIdle(Player player) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
         applySkin(meta, TIMER_HEAD_UUID, TIMER_HEAD_TEXTURE);
-        int seconds = (remainingTicks + 19) / 20;
-        meta.displayName(plainName(seconds + "s", NamedTextColor.YELLOW));
+        meta.displayName(plainName(lang("gui.view_recipe"), NamedTextColor.WHITE));
         meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         head.setItemMeta(meta);
         return head;
     }
 
+    @Deprecated
     public static ItemStack createTimerHeadIdle() {
-        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
-        SkullMeta meta = (SkullMeta) head.getItemMeta();
-        applySkin(meta, TIMER_HEAD_UUID, TIMER_HEAD_TEXTURE);
-        meta.displayName(plainName("查看配方", NamedTextColor.WHITE));
-        meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
-        head.setItemMeta(meta);
-        return head;
+        return createTimerHeadIdle(null);
     }
 
-    public static ItemStack createTimerHead2(int remainingTicks) {
+    public static ItemStack createTimerHead2(Player player, int remainingTicks) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
         applySkin(meta, TIMER_HEAD_2_UUID, TIMER_HEAD_2_TEXTURE);
@@ -548,14 +745,24 @@ public final class ItemFactory {
         return head;
     }
 
-    public static ItemStack createTimerHeadIdle2() {
+    @Deprecated
+    public static ItemStack createTimerHead2(int remainingTicks) {
+        return createTimerHead2(null, remainingTicks);
+    }
+
+    public static ItemStack createTimerHeadIdle2(Player player) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
         applySkin(meta, TIMER_HEAD_2_UUID, TIMER_HEAD_2_TEXTURE);
-        meta.displayName(plainName("查看配方", NamedTextColor.WHITE));
+        meta.displayName(plainName(lang("gui.view_recipe"), NamedTextColor.WHITE));
         meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         head.setItemMeta(meta);
         return head;
+    }
+
+    @Deprecated
+    public static ItemStack createTimerHeadIdle2() {
+        return createTimerHeadIdle2(null);
     }
 
     public static boolean isCustom(ItemStack item, NamespacedKey key) {
@@ -563,5 +770,15 @@ public final class ItemFactory {
         if (!item.hasItemMeta()) return false;
         return item.getItemMeta().getPersistentDataContainer()
                 .has(key, PersistentDataType.BYTE);
+    }
+
+    public static java.util.Set<NamespacedKey> markersOf(ItemStack item) {
+        java.util.Set<NamespacedKey> found = new java.util.LinkedHashSet<>();
+        if (item == null || item.getType() == Material.AIR || !item.hasItemMeta()) return found;
+        var pdc = item.getItemMeta().getPersistentDataContainer();
+        for (NamespacedKey key : ItemKeys.allMarkers()) {
+            if (key != null && pdc.has(key, PersistentDataType.BYTE)) found.add(key);
+        }
+        return found;
     }
 }

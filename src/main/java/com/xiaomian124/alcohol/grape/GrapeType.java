@@ -1,62 +1,63 @@
 package com.xiaomian124.alcohol.grape;
 
 import com.xiaomian124.alcohol.BeerType;
+import com.xiaomian124.alcohol.ItemFactory;
 import com.xiaomian124.alcohol.ItemKeys;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 
 public enum GrapeType {
 
-    RED("红葡萄", "红葡萄种子", "紫红色的葡萄",
+    RED("red",
             Material.SWEET_BERRY_BUSH, Material.SWEET_BERRIES,
             Material.COCOA_BEANS,
             GrowthMode.GROUND, TreeType.OAK,
             BeerType.RED_GRAPE_JUICE,
             "RED_GRAPE_SEED", "RED_GRAPE"),
 
-    WHITE("白葡萄", "白葡萄种子", "青白色的葡萄",
+    WHITE("white",
             Material.SWEET_BERRY_BUSH, Material.TORCHFLOWER_SEEDS,
             Material.COCOA_BEANS,
             GrowthMode.GROUND, TreeType.OAK,
             BeerType.WHITE_GRAPE_JUICE,
             "WHITE_GRAPE_SEED", "WHITE_GRAPE"),
 
-    SAVANNA_RED("热带草原红葡萄", "热带草原红葡萄种子", "热带草原特有的红葡萄",
+    SAVANNA_RED("savanna_red",
             Material.SWEET_BERRY_BUSH, Material.SWEET_BERRIES,
             Material.COCOA_BEANS,
             GrowthMode.GROUND, TreeType.ACACIA,
             BeerType.SAVANNA_RED_GRAPE_JUICE,
             "SAVANNA_RED_GRAPE_SEED", "SAVANNA_RED_GRAPE"),
 
-    SAVANNA_WHITE("热带草原白葡萄", "热带草原白葡萄种子", "热带草原特有的白葡萄",
+    SAVANNA_WHITE("savanna_white",
             Material.SWEET_BERRY_BUSH, Material.TORCHFLOWER_SEEDS,
             Material.COCOA_BEANS,
             GrowthMode.GROUND, TreeType.ACACIA,
             BeerType.SAVANNA_WHITE_GRAPE_JUICE,
             "SAVANNA_WHITE_GRAPE_SEED", "SAVANNA_WHITE_GRAPE"),
 
-    JUNGLE_RED("丛林红葡萄", "丛林红葡萄种子", "丛林藤蔓上的红葡萄",
+    JUNGLE_RED("jungle_red",
             Material.VINE, Material.SWEET_BERRIES,
             Material.COCOA_BEANS,
             GrowthMode.VINE, TreeType.JUNGLE,
             BeerType.JUNGLE_RED_GRAPE_JUICE,
             "JUNGLE_RED_GRAPE_SEED", "JUNGLE_RED_GRAPE"),
 
-    JUNGLE_WHITE("丛林白葡萄", "丛林白葡萄种子", "丛林藤蔓上的白葡萄",
+    JUNGLE_WHITE("jungle_white",
             Material.VINE, Material.TORCHFLOWER_SEEDS,
             Material.COCOA_BEANS,
             GrowthMode.VINE, TreeType.JUNGLE,
             BeerType.JUNGLE_WHITE_GRAPE_JUICE,
             "JUNGLE_WHITE_GRAPE_SEED", "JUNGLE_WHITE_GRAPE"),
 
-    TAIGA_RED("针叶林红葡萄", "针叶林红葡萄种子", "针叶林栅栏上的红葡萄",
+    TAIGA_RED("taiga_red",
             Material.DARK_OAK_LEAVES, Material.SWEET_BERRIES,
             Material.COCOA_BEANS,
             GrowthMode.FENCE, TreeType.SPRUCE,
             BeerType.TAIGA_RED_GRAPE_JUICE,
             "TAIGA_RED_GRAPE_SEED", "TAIGA_RED_GRAPE"),
 
-    TAIGA_WHITE("针叶林白葡萄", "针叶林白葡萄种子", "针叶林栅栏上的白葡萄",
+    TAIGA_WHITE("taiga_white",
             Material.DARK_OAK_LEAVES, Material.TORCHFLOWER_SEEDS,
             Material.COCOA_BEANS,
             GrowthMode.FENCE, TreeType.SPRUCE,
@@ -66,9 +67,7 @@ public enum GrapeType {
     public enum GrowthMode { GROUND, VINE, FENCE }
     public enum TreeType { OAK, ACACIA, JUNGLE, SPRUCE }
 
-    private final String grapeName;
-    private final String seedName;
-    private final String lore;
+    private final String langBase;
     private final Material plantMaterial;
     private final Material grapeMaterial;
     private final Material seedMaterial;
@@ -78,14 +77,12 @@ public enum GrapeType {
     private final String seedKeyName;
     private final String grapeKeyName;
 
-    GrapeType(String grapeName, String seedName, String lore,
+    GrapeType(String langBase,
               Material plantMaterial, Material grapeMaterial,
               Material seedMaterial, GrowthMode growthMode,
               TreeType treeType, BeerType beerType,
               String seedKeyName, String grapeKeyName) {
-        this.grapeName = grapeName;
-        this.seedName = seedName;
-        this.lore = lore;
+        this.langBase = langBase;
         this.plantMaterial = plantMaterial;
         this.grapeMaterial = grapeMaterial;
         this.seedMaterial = seedMaterial;
@@ -96,9 +93,16 @@ public enum GrapeType {
         this.grapeKeyName = grapeKeyName;
     }
 
-    public String getGrapeName()   { return grapeName; }
-    public String getSeedName()    { return seedName; }
-    public String getLore()        { return lore; }
+    public String langBase() { return "grape." + langBase; }
+
+    public String grapeNameKey() { return langBase() + ".name"; }
+    public String seedNameKey()  { return langBase() + ".seed_name"; }
+    public String loreKey()      { return langBase() + ".lore"; }
+
+    public String getGrapeName() { return ItemFactory.lang(grapeNameKey()); }
+    public String getSeedName()  { return ItemFactory.lang(seedNameKey()); }
+    public String getLore()      { return ItemFactory.lang(loreKey()); }
+
     public Material getGrapeMaterial() { return grapeMaterial; }
     public Material getSeedMaterial()  { return seedMaterial; }
     public Material getPlantMaterial() { return plantMaterial; }

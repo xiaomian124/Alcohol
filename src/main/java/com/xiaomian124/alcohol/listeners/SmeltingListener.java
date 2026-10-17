@@ -51,7 +51,7 @@ public class SmeltingListener implements Listener {
 
         if (type == Material.BEETROOT_SEEDS) {
             if (ItemFactory.isCustom(source, ItemKeys.CORN_KERNELS)) {
-                event.setResult(ItemFactory.createDriedCorn());
+                event.setResult(ItemFactory.createDriedCorn(null));
             } else {
                 event.setCancelled(true);
             }
@@ -67,12 +67,12 @@ public class SmeltingListener implements Listener {
             }
 
             if (ItemFactory.isCustom(source, ItemKeys.BARLEY)) {
-                event.setResult(ItemFactory.createDriedBarley());
+                event.setResult(ItemFactory.createDriedBarley(null));
                 return;
             }
 
             if (ItemFactory.isCustom(source, ItemKeys.OATS)) {
-                event.setResult(ItemFactory.createDriedOats());
+                event.setResult(ItemFactory.createDriedOats(null));
             }
         }
     }

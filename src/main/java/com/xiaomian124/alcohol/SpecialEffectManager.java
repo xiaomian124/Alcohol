@@ -75,13 +75,12 @@ public final class SpecialEffectManager {
 
         long end = System.currentTimeMillis() + duration(type) * 50L;
         ACTIVE.computeIfAbsent(p.getUniqueId(), k -> new HashMap<>()).put(type, end);
-        DrinkEffectDisplay.recordSpecial(p, getSpecialName(type), duration(type));
+        DrinkEffectDisplay.recordSpecial(p, getSpecialName(p, type), duration(type));
 
         EffectStorage.saveAll();
     }
 
     public static void onPlayerJump(Player p) {
-        // 飞升
         if (hasEffect(p, BeerType.BOUNCE_WHITE_WINE)) {
             Long last = JUMP_COOLDOWN.get(p.getUniqueId());
             long now = System.currentTimeMillis();
@@ -217,7 +216,7 @@ public final class SpecialEffectManager {
         cat.setInvulnerable(true);
         cat.setSilent(false);
         cat.setPersistent(true);
-        cat.customName(Component.text("耄耋").color(NamedTextColor.GOLD));
+        cat.customName(LanguageManager.get(p, "entity.elder_cat.name"));
         cat.setCustomNameVisible(true);
         cat.getPersistentDataContainer().set(
                 ELDER_CAT_KEY, PersistentDataType.BYTE, (byte) 1);
@@ -495,23 +494,28 @@ public final class SpecialEffectManager {
         return end != null && System.currentTimeMillis() < end;
     }
 
-    private static String getSpecialName(BeerType type) {
-        return switch (type) {
-            case HONEY_WINE -> "蜂蜜";
-            case TROPICAL_SEA_WINE -> "水上行者";
-            case LAMBRUSCO -> "狂欢";
-            case SPIDER_SPECIAL_WINE -> "攀爬";
-            case FROST_WHITE_WINE -> "冰冻";
-            case AEGIS_WHITE_WINE -> "护盾";
-            case BLAZE_WALKER_WINE -> "岩浆行者";
-            case CHORUS_WINE -> "瞬移";
-            case BOUNCE_WHITE_WINE -> "飞升";
-            case MAGNETIC_WINE -> "磁吸";
-            case SPIDER_RED_WINE -> "免疫蜘蛛网";
-            case CATGIRL_RED_WINE -> "猫娘";
-            case ELDER_WINE -> "耄耋";
-            default -> type.getDisplayName();
+    private static String getSpecialName(Player p, BeerType type) {
+        String key = switch (type) {
+            case HONEY_WINE -> "effect.honey";
+            case TROPICAL_SEA_WINE -> "effect.water_walker";
+            case LAMBRUSCO -> "effect.carnival";
+            case SPIDER_SPECIAL_WINE -> "effect.climb";
+            case FROST_WHITE_WINE -> "effect.freeze";
+            case AEGIS_WHITE_WINE -> "effect.shield";
+            case BLAZE_WALKER_WINE -> "effect.lava_walker";
+            case CHORUS_WINE -> "effect.teleport";
+            case BOUNCE_WHITE_WINE -> "effect.bounce";
+            case MAGNETIC_WINE -> "effect.magnet";
+            case SPIDER_RED_WINE -> "effect.web_immune";
+            case CATGIRL_RED_WINE -> "effect.catgirl";
+            case ELDER_WINE -> "effect.elder";
+            default -> null;
         };
+
+        if (key == null) {
+            return LanguageManager.getRaw(p, type.getNameKey());
+        }
+        return LanguageManager.getRaw(p, key);
     }
 
     public static Map<UUID, Map<BeerType, Long>> snapshotActive() {
@@ -531,7 +535,6 @@ public final class SpecialEffectManager {
     }
 
     public static Map<UUID, List<AttachedEntity>> snapshotAttached() {
-        // 返回玩家 → 猫娘/耄耋位置
         Map<UUID, List<AttachedEntity>> result = new HashMap<>();
         for (var entry : ATTACHED.entrySet()) {
             List<AttachedEntity> list = new ArrayList<>();

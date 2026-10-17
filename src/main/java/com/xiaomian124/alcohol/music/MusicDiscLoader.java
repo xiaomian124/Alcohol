@@ -48,7 +48,7 @@ public final class MusicDiscLoader {
 
             if (!jarFile.isFile()) {
                 AlcoholPlugin.getInstance().getLogger()
-                        .warning("未检测到打包后的 jar，无法自动扫描歌曲。");
+                        .warning("Packaged jar not detected, cannot scan songs automatically.");
                 return result;
             }
 
@@ -75,10 +75,10 @@ public final class MusicDiscLoader {
             }
 
             AlcoholPlugin.getInstance().getLogger()
-                    .info("已自动加载 " + result.size() + " 首内置nbs音乐。");
+                    .info("Automatically loaded " + result.size() + " built-in nbs songs.");
         } catch (Exception e) {
             AlcoholPlugin.getInstance().getLogger()
-                    .warning("扫描nbs音乐失败: " + e.getMessage());
+                    .warning("Failed to scan nbs songs: " + e.getMessage());
         }
 
         return result;

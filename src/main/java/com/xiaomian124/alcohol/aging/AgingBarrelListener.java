@@ -1,6 +1,7 @@
 package com.xiaomian124.alcohol.aging;
 
 import com.xiaomian124.alcohol.AlcoholPlugin;
+import com.xiaomian124.alcohol.LanguageManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -65,9 +66,7 @@ public class AgingBarrelListener implements Listener {
 
         gui.setStorageState(null, 0);
 
-        player.sendActionBar(
-                Component.text("已倒掉所有的葡萄汁，酒量储存清空")
-                        .color(NamedTextColor.YELLOW));
+        player.sendActionBar(LanguageManager.get(player, "msg.aging_barrel.emptied"));
 
         player.playSound(block.getLocation(),
                 Sound.ITEM_BUCKET_EMPTY, 1.0f, 1.0f);

@@ -42,7 +42,7 @@ public final class RecipeManager {
         Bukkit.removeRecipe(KEY_DRY_WHEAT);
         Bukkit.addRecipe(new SmokingRecipe(
                 KEY_DRY_WHEAT,
-                ItemFactory.createDryWheat(),
+                ItemFactory.createDryWheat(null),
                 Material.WHEAT,
                 0.35f,
                 200));
@@ -51,7 +51,7 @@ public final class RecipeManager {
         Bukkit.removeRecipe(cornSmeltKey);
         Bukkit.addRecipe(new SmokingRecipe(
                 cornSmeltKey,
-                ItemFactory.createDriedCorn(),
+                ItemFactory.createDriedCorn(null),
                 Material.BEETROOT_SEEDS,
                 0.35f,
                 200));
@@ -59,7 +59,7 @@ public final class RecipeManager {
         KEY_HARVEST_SHEARS = new NamespacedKey(plugin, "harvest_shears");
         Bukkit.removeRecipe(KEY_HARVEST_SHEARS);
         ShapedRecipe shears = new ShapedRecipe(
-                KEY_HARVEST_SHEARS, ItemFactory.createHarvestShears());
+                KEY_HARVEST_SHEARS, ItemFactory.createHarvestShears(null));
         shears.shape("i i", "i i", " i ");
         shears.setIngredient('i', Material.IRON_INGOT);
         Bukkit.addRecipe(shears);
@@ -67,7 +67,7 @@ public final class RecipeManager {
         KEY_COOKING_POT = new NamespacedKey(plugin, "cooking_pot");
         Bukkit.removeRecipe(KEY_COOKING_POT);
         ShapedRecipe pot = new ShapedRecipe(
-                KEY_COOKING_POT, ItemFactory.createCookingPot());
+                KEY_COOKING_POT, ItemFactory.createCookingPot(null));
         pot.shape("   ", "iwi", "iii");
         pot.setIngredient('i', Material.IRON_INGOT);
         pot.setIngredient('w', Material.WOODEN_SHOVEL);
@@ -76,7 +76,7 @@ public final class RecipeManager {
         KEY_BREWING_BOX = new NamespacedKey(plugin, "brewing_box");
         Bukkit.removeRecipe(KEY_BREWING_BOX);
         ShapedRecipe box = new ShapedRecipe(
-                KEY_BREWING_BOX, ItemFactory.createBrewingBox());
+                KEY_BREWING_BOX, ItemFactory.createBrewingBox(null));
         box.shape("   ", "i i", "isi");
         box.setIngredient('i', Material.IRON_INGOT);
         box.setIngredient('s', Material.SMOKER);
@@ -84,7 +84,7 @@ public final class RecipeManager {
 
         KEY_CORN_KERNELS = new NamespacedKey(plugin, "corn_kernels");
         Bukkit.removeRecipe(KEY_CORN_KERNELS);
-        ItemStack kernelsResult = ItemFactory.createCornKernels();
+        ItemStack kernelsResult = ItemFactory.createCornKernels(null);
         kernelsResult.setAmount(5);
         ShapelessRecipe cornKernels = new ShapelessRecipe(
                 KEY_CORN_KERNELS, kernelsResult);
@@ -94,7 +94,7 @@ public final class RecipeManager {
         KEY_APPLE_PRESS = new NamespacedKey(plugin, "apple_press");
         Bukkit.removeRecipe(KEY_APPLE_PRESS);
         ShapedRecipe applePress = new ShapedRecipe(
-                KEY_APPLE_PRESS, ItemFactory.createApplePress());
+                KEY_APPLE_PRESS, ItemFactory.createApplePress(null));
         applePress.shape("   ", "iii", "ili");
         applePress.setIngredient('i', Material.IRON_INGOT);
         applePress.setIngredient('l', Material.LOOM);
@@ -103,7 +103,7 @@ public final class RecipeManager {
         KEY_AGING_BARREL = new NamespacedKey(plugin, "aging_barrel");
         Bukkit.removeRecipe(KEY_AGING_BARREL);
         ShapedRecipe agingBarrel = new ShapedRecipe(
-                KEY_AGING_BARREL, ItemFactory.createAgingBarrel());
+                KEY_AGING_BARREL, ItemFactory.createAgingBarrel(null));
         agingBarrel.shape("   ", "ibi", "iii");
         agingBarrel.setIngredient('i', Material.IRON_INGOT);
         agingBarrel.setIngredient('b', Material.BARREL);
@@ -112,7 +112,7 @@ public final class RecipeManager {
         KEY_GRAPE_BASIN = new NamespacedKey(plugin, "grape_basin");
         Bukkit.removeRecipe(KEY_GRAPE_BASIN);
         ShapedRecipe grapeBasin = new ShapedRecipe(
-                KEY_GRAPE_BASIN, ItemFactory.createGrapeBasin());
+                KEY_GRAPE_BASIN, ItemFactory.createGrapeBasin(null));
         grapeBasin.shape("   ", "ibi", "iii");
         grapeBasin.setIngredient('i', Material.IRON_INGOT);
         grapeBasin.setIngredient('b', Material.COMPOSTER);
@@ -121,13 +121,13 @@ public final class RecipeManager {
         NamespacedKey musicPlayerKey = new NamespacedKey(plugin, "music_player");
         Bukkit.removeRecipe(musicPlayerKey);
         ShapedRecipe musicPlayer = new ShapedRecipe(
-                musicPlayerKey, ItemFactory.createMusicPlayer());
+                musicPlayerKey, ItemFactory.createMusicPlayer(null));
         musicPlayer.shape("   ", "iji", "iii");
         musicPlayer.setIngredient('i', Material.IRON_INGOT);
         musicPlayer.setIngredient('j', Material.JUKEBOX);
         Bukkit.addRecipe(musicPlayer);
 
-        plugin.getLogger().info("已注册所有配方");
+        plugin.getLogger().info("All recipes registered!");
     }
 
     private static List<CookingRecipe> cookingRecipes = null;
@@ -141,7 +141,7 @@ public final class RecipeManager {
                                     new ItemStack(Material.WATER_BUCKET),
                                     new ItemStack(Material.WHEAT)
                             ),
-                            ItemFactory.createYeast(),
+                            ItemFactory.createYeast(null),
                             600
                     )
             );
@@ -163,52 +163,52 @@ public final class RecipeManager {
             brewingRecipes = List.of(
                     // 啤酒
                     makeBeerRecipe(BeerType.WHEAT_BEER,
-                            ItemFactory.createDryWheat(),
-                            ItemFactory.createHops()),
+                            ItemFactory.createDryWheat(null),
+                            ItemFactory.createHops(null)),
                     makeBeerRecipe(BeerType.BARLEY_BEER,
-                            ItemFactory.createDriedBarley(),
-                            ItemFactory.createHops()),
+                            ItemFactory.createDriedBarley(null),
+                            ItemFactory.createHops(null)),
                     makeBeerRecipe(BeerType.HOPS_BEER,
-                            ItemFactory.createHops(),
-                            ItemFactory.createHops()),
+                            ItemFactory.createHops(null),
+                            ItemFactory.createHops(null)),
                     makeBeerRecipe(BeerType.NETTLE_BEER,
-                            ItemFactory.createWildNettle(),
-                            ItemFactory.createHops()),
+                            ItemFactory.createWildNettle(null),
+                            ItemFactory.createHops(null)),
                     makeBeerRecipe(BeerType.OATS_BEER,
-                            ItemFactory.createDriedOats(),
-                            ItemFactory.createHops()),
+                            ItemFactory.createDriedOats(null),
+                            ItemFactory.createHops(null)),
                     makeBeerRecipe(BeerType.COCOA_BEER,
                             new ItemStack(Material.COCOA_BEANS),
-                            ItemFactory.createHops()),
+                            ItemFactory.createHops(null)),
 
                     // 威士忌
                     makeWhiskyRecipe(BeerType.BELGRAVIA,
-                            ItemFactory.createDriedBarley(),
-                            ItemFactory.createDriedBarley()),
+                            ItemFactory.createDriedBarley(null),
+                            ItemFactory.createDriedBarley(null)),
                     makeWhiskyRecipe(BeerType.ISLAY,
-                            ItemFactory.createDryWheat(),
-                            ItemFactory.createDriedBarley()),
+                            ItemFactory.createDryWheat(null),
+                            ItemFactory.createDriedBarley(null)),
                     makeWhiskyRecipe(BeerType.BOURBON,
-                            ItemFactory.createDriedCorn(),
-                            ItemFactory.createDriedCorn()),
+                            ItemFactory.createDriedCorn(null),
+                            ItemFactory.createDriedCorn(null)),
                     makeWhiskyRecipe(BeerType.MACALLAN,
-                            ItemFactory.createDryWheat(),
-                            ItemFactory.createDryWheat()),
+                            ItemFactory.createDryWheat(null),
+                            ItemFactory.createDryWheat(null)),
                     makeWhiskyRecipe(BeerType.GLENFIDDICH,
-                            ItemFactory.createDryWheat(),
-                            ItemFactory.createDriedCorn()),
+                            ItemFactory.createDryWheat(null),
+                            ItemFactory.createDriedCorn(null)),
                     makeWhiskyRecipe(BeerType.BAINS,
-                            ItemFactory.createDriedOats(),
-                            ItemFactory.createDriedCorn()),
+                            ItemFactory.createDriedOats(null),
+                            ItemFactory.createDriedCorn(null)),
                     makeWhiskyRecipe(BeerType.SUNTORY,
-                            ItemFactory.createDryWheat(),
-                            ItemFactory.createDriedOats()),
+                            ItemFactory.createDryWheat(null),
+                            ItemFactory.createDriedOats(null)),
                     makeWhiskyRecipe(BeerType.BUFFALO_TRACE,
-                            ItemFactory.createDriedOats(),
-                            ItemFactory.createDriedOats()),
+                            ItemFactory.createDriedOats(null),
+                            ItemFactory.createDriedOats(null)),
                     makeWhiskyRecipe(BeerType.JIM_BEAM,
-                            ItemFactory.createDriedBarley(),
-                            ItemFactory.createDriedOats())
+                            ItemFactory.createDriedBarley(null),
+                            ItemFactory.createDriedOats(null))
             );
         }
         return brewingRecipes;
@@ -217,16 +217,16 @@ public final class RecipeManager {
     private static BrewingRecipe makeBeerRecipe(BeerType type,
                                                 ItemStack main1, ItemStack main2) {
         return new BrewingRecipe(
-                List.of(main1, main2, ItemFactory.createYeast()),
-                ItemFactory.createBeer(type, BeerQuality.HIGH),
+                List.of(main1, main2, ItemFactory.createYeast(null)),
+                ItemFactory.createBeer(null, type, BeerQuality.HIGH),
                 3, 100, 1200);
     }
 
     private static BrewingRecipe makeWhiskyRecipe(BeerType type,
                                                   ItemStack main1, ItemStack main2) {
         return new BrewingRecipe(
-                List.of(main1, main2, ItemFactory.createYeast()),
-                ItemFactory.createBeer(type, BeerQuality.HIGH),
+                List.of(main1, main2, ItemFactory.createYeast(null)),
+                ItemFactory.createBeer(null, type, BeerQuality.HIGH),
                 3, 100, 1200);
     }
 

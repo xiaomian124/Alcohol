@@ -1,8 +1,8 @@
 package com.xiaomian124.alcohol.recipe;
 
 import com.xiaomian124.alcohol.ItemFactory;
+import com.xiaomian124.alcohol.LanguageManager;
 import com.xiaomian124.alcohol.gui.GuiPageCache;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -34,7 +34,7 @@ public class RecipeViewerGUI implements InventoryHolder {
         this.machines = new ArrayList<>(List.of(MachineType.values()));
         this.page = GuiPageCache.getRecipePage(player);
         this.inventory = Bukkit.createInventory(this, SIZE,
-                Component.text("配方查看").color(NamedTextColor.DARK_GRAY));
+                LanguageManager.get(player, "gui.recipe_viewer.title"));
         clampPage();
         refresh();
     }
@@ -62,18 +62,23 @@ public class RecipeViewerGUI implements InventoryHolder {
             ItemStack icon = new ItemStack(machine.icon);
             ItemMeta meta = icon.getItemMeta();
             meta.displayName(ItemFactory.plainName(
-                    machine.displayName, NamedTextColor.GOLD));
+                    LanguageManager.getRaw(player,
+                            "machine." + machine.name().toLowerCase() + ".name"),
+                    NamedTextColor.GOLD));
 
             if (machine == MachineType.MUSIC_PLAYER) {
                 meta.lore(List.of(
-                        ItemFactory.plainName("右键：查看合成方式",
+                        ItemFactory.plainName(
+                                LanguageManager.getRaw(player, "gui.right_click_view_craft"),
                                 NamedTextColor.GRAY)
                 ));
             } else {
                 meta.lore(List.of(
-                        ItemFactory.plainName("左键：查看可制作物品",
+                        ItemFactory.plainName(
+                                LanguageManager.getRaw(player, "gui.left_click_view_items"),
                                 NamedTextColor.GRAY),
-                        ItemFactory.plainName("右键：查看合成方式",
+                        ItemFactory.plainName(
+                                LanguageManager.getRaw(player, "gui.right_click_view_craft"),
                                 NamedTextColor.GRAY)
                 ));
             }
@@ -82,8 +87,8 @@ public class RecipeViewerGUI implements InventoryHolder {
         }
 
         int totalPages = (machines.size() + PER_PAGE - 1) / PER_PAGE;
-        if (page > 0) inventory.setItem(PREV_SLOT, ItemFactory.createPrevHead());
-        if (page < totalPages - 1) inventory.setItem(NEXT_SLOT, ItemFactory.createNextHead());
+        if (page > 0) inventory.setItem(PREV_SLOT, ItemFactory.createPrevHead(player));
+        if (page < totalPages - 1) inventory.setItem(NEXT_SLOT, ItemFactory.createNextHead(player));
     }
 
     private static ItemStack pane(Material mat, String name) {

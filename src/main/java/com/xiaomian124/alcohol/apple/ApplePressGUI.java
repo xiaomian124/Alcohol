@@ -2,11 +2,13 @@ package com.xiaomian124.alcohol.apple;
 
 import com.xiaomian124.alcohol.AlcoholPlugin;
 import com.xiaomian124.alcohol.ItemFactory;
+import com.xiaomian124.alcohol.LanguageManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -38,7 +40,8 @@ public class ApplePressGUI implements InventoryHolder {
         this.plugin = plugin;
         this.block = block;
         this.inventory = Bukkit.createInventory(this, SIZE,
-                Component.text("苹果压榨器").color(NamedTextColor.DARK_GRAY));
+                Component.text(LanguageManager.getRaw(null, "machine.apple_press.name"))
+                        .color(NamedTextColor.DARK_GRAY));
         fillBackground();
         updateHeads();
         restoreFromManager();
@@ -185,17 +188,36 @@ public class ApplePressGUI implements InventoryHolder {
         }
     }
 
+    private Player getViewer() {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.getOpenInventory().getTopInventory().getHolder() == this) {
+                return p;
+            }
+        }
+        return null;
+    }
+
     private void updateHeads() {
+        Player viewer = getViewer();
         if (mashRemaining > 0) {
-            inventory.setItem(HEAD_1_SLOT, ItemFactory.createTimerHead(mashRemaining));
+            inventory.setItem(HEAD_1_SLOT, ItemFactory.createTimerHead(viewer, mashRemaining));
         } else {
-            inventory.setItem(HEAD_1_SLOT, ItemFactory.createTimerHeadIdle());
+            inventory.setItem(HEAD_1_SLOT, ItemFactory.createTimerHeadIdle(viewer));
         }
         if (juiceRemaining > 0) {
-            inventory.setItem(HEAD_2_SLOT, ItemFactory.createTimerHead2(juiceRemaining));
+            inventory.setItem(HEAD_2_SLOT, ItemFactory.createTimerHead2(viewer, juiceRemaining));
         } else {
-            inventory.setItem(HEAD_2_SLOT, ItemFactory.createTimerHeadIdle2());
+            inventory.setItem(HEAD_2_SLOT, ItemFactory.createTimerHeadIdle2(viewer));
         }
+    }
+
+    public static int[] getDropSlots() {
+        return new int[]{
+                APPLE_INPUT_SLOT,
+                GLASS_INPUT_SLOT,
+                MASH_SLOT,
+                JUICE_OUTPUT_SLOT
+        };
     }
 
     public Block getBlock() { return block; }

@@ -2,6 +2,7 @@ package com.xiaomian124.alcohol.brewing;
 
 import com.xiaomian124.alcohol.AlcoholPlugin;
 import com.xiaomian124.alcohol.ItemKeys;
+import com.xiaomian124.alcohol.LanguageManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -75,8 +76,8 @@ public class BrewingBoxListener implements Listener {
 
         ItemStack hand = player.getInventory().getItemInMainHand();
         if (hand.getType() != Material.GLASS_BOTTLE) {
-            player.sendActionBar(
-                    Component.text("需要手持玻璃瓶").color(NamedTextColor.RED));
+            player.sendActionBar(LanguageManager.get(player,
+                    "msg.brewing_box.need_bottle"));
             return;
         }
 
@@ -97,11 +98,10 @@ public class BrewingBoxListener implements Listener {
         Component beerName = (beer.getItemMeta() != null
                 && beer.getItemMeta().displayName() != null)
                 ? beer.getItemMeta().displayName()
-                : Component.text("酒").color(NamedTextColor.YELLOW);
+                : LanguageManager.get(player, "item.beer.name");
 
-        player.sendActionBar(
-                Component.text("你酿造了一瓶")
-                        .color(NamedTextColor.YELLOW).append(beerName));
+        player.sendActionBar(LanguageManager.get(player, "msg.brewing_box.collected")
+                .append(beerName));
     }
 
     @EventHandler

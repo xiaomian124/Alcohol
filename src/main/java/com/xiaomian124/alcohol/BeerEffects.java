@@ -14,102 +14,94 @@ public final class BeerEffects {
 
     private BeerEffects() {}
 
-    public static List<Component> getEffectLines(BeerType type) {
+    public static List<Component> getEffectLines(Player player, BeerType type) {
         List<Component> list = new ArrayList<>();
         switch (type) {
             case WHEAT_BEER -> {
-                list.add(pos("力量 (00:10)"));
-                list.add(pos("瞬间治疗 (00:10)"));
+                list.add(pos(lang(player, "beer.wheat_beer.effect.0")));
+                list.add(pos(lang(player, "beer.wheat_beer.effect.1")));
             }
             case BARLEY_BEER -> {
-                list.add(pos("力量 (00:10)"));
-                list.add(pos("瞬间治疗 (00:10)"));
-                list.add(pos("急迫 (00:10)"));
+                list.add(pos(lang(player, "beer.barley_beer.effect.0")));
+                list.add(pos(lang(player, "beer.barley_beer.effect.1")));
+                list.add(pos(lang(player, "beer.barley_beer.effect.2")));
             }
             case HOPS_BEER -> {
-                list.add(pos("跳跃提升 (00:10)"));
-                list.add(pos("力量 II (00:10)"));
-                list.add(pos("速度 (00:10)"));
+                list.add(pos(lang(player, "beer.hops_beer.effect.0")));
+                list.add(pos(lang(player, "beer.hops_beer.effect.1")));
+                list.add(pos(lang(player, "beer.hops_beer.effect.2")));
             }
             case NETTLE_BEER -> {
-                list.add(pos("瞬间治疗 (00:10)"));
-                list.add(pos("急迫 (00:10)"));
-                list.add(pos("隐身 (00:10)"));
+                list.add(pos(lang(player, "beer.nettle_beer.effect.0")));
+                list.add(pos(lang(player, "beer.nettle_beer.effect.1")));
+                list.add(pos(lang(player, "beer.nettle_beer.effect.2")));
             }
             case OATS_BEER -> {
-                list.add(pos("夜视 (00:10)"));
-                list.add(pos("力量 (00:10)"));
-                list.add(pos("瞬间治疗 (00:10)"));
+                list.add(pos(lang(player, "beer.oats_beer.effect.0")));
+                list.add(pos(lang(player, "beer.oats_beer.effect.1")));
+                list.add(pos(lang(player, "beer.oats_beer.effect.2")));
             }
             case COCOA_BEER -> {
-                list.add(pos("瞬间治疗 (00:10)"));
-                list.add(pos("急迫 (00:10)"));
-                list.add(pos("生命恢复 II (00:10)"));
+                list.add(pos(lang(player, "beer.cocoa_beer.effect.0")));
+                list.add(pos(lang(player, "beer.cocoa_beer.effect.1")));
+                list.add(pos(lang(player, "beer.cocoa_beer.effect.2")));
             }
 
             case BELGRAVIA -> {
-                list.add(pos("瞬间治疗 II (00:20)"));
-                list.add(pos("跳跃提升 II (00:20)"));
+                list.add(pos(lang(player, "beer.belgravia.effect.0")));
+                list.add(pos(lang(player, "beer.belgravia.effect.1")));
             }
             case ISLAY -> {
-                list.add(pos("抗性提升 (00:20)"));
-                list.add(pos("防火 (00:20)"));
+                list.add(pos(lang(player, "beer.islay.effect.0")));
+                list.add(pos(lang(player, "beer.islay.effect.1")));
             }
             case BOURBON -> {
-                list.add(pos("潮涌能量 (00:20)"));
-                list.add(pos("海豚的恩惠 (00:20)"));
+                list.add(pos(lang(player, "beer.bourbon.effect.0")));
+                list.add(pos(lang(player, "beer.bourbon.effect.1")));
             }
             case MACALLAN -> {
-                list.add(pos("幸运 II (00:20)"));
-                list.add(pos("伤害吸收 (00:20)"));
+                list.add(pos(lang(player, "beer.macallan.effect.0")));
+                list.add(pos(lang(player, "beer.macallan.effect.1")));
             }
             case GLENFIDDICH -> {
-                list.add(pos("发光 (00:20)"));
-                list.add(pos("生命提升 III (00:20)"));
+                list.add(pos(lang(player, "beer.glenfiddich.effect.0")));
+                list.add(pos(lang(player, "beer.glenfiddich.effect.1")));
             }
-            case BAINS -> {
-                list.add(pos("村庄英雄 (00:40)"));
-            }
-            case SUNTORY -> {
-                list.add(pos("缓降 (00:40)"));
-            }
-            case BUFFALO_TRACE -> {
-                list.add(neg("飘浮 (00:40)"));
-            }
-            case JIM_BEAM -> {
-                list.add(pos("隐身 (00:40)"));
-            }
+            case BAINS -> list.add(pos(lang(player, "beer.bains.effect.0")));
+            case SUNTORY -> list.add(pos(lang(player, "beer.suntory.effect.0")));
+            case BUFFALO_TRACE -> list.add(neg(lang(player, "beer.buffalo_trace.effect.0")));
+            case JIM_BEAM -> list.add(pos(lang(player, "beer.jim_beam.effect.0")));
 
-            case HONEY_WINE -> list.add(pos("蜂蜜 (00:10)"));
-            case APPLE_FLAVOR_WINE -> list.add(pos("力量 III (00:40)"));
-            case APPLE_WINE -> list.add(pos("抗性提升 (01:00)"));
-            case VITALITY_WINE -> list.add(pos("瞬间治疗 III (00:20)"));
-            case SUNSHINE_WINE -> list.add(pos("发光 (00:40)"));
-            case CENTURY_WHITE_WINE -> list.add(pos("生命提升 III (00:30)"));
-            case PINOT_NOIR -> list.add(pos("跳跃提升 (01:00)"));
-            case FLAVOR_RED_WINE -> list.add(pos("急迫 (01:00)"));
-            case MERLOT -> list.add(pos("夜视 (01:30)"));
-            case CHERRY_WINE -> list.add(pos("饱和 (00:50)"));
-            case SCUBA_DIVING -> list.add(pos("水下呼吸 (01:30)"));
-            case TROPICAL_CREEPER_WINE -> list.add(neg("爆炸 (00:01)"));
-            case TROPICAL_SEA_WINE -> list.add(pos("水上行者 (01:00)"));
-            case LAMBRUSCO -> list.add(pos("狂欢 (00:30)"));
-            case SPIDER_SPECIAL_WINE -> list.add(pos("攀爬 (00:30)"));
-            case FROST_WHITE_WINE -> list.add(neg("冰冻 (00:20)"));
-            case AEGIS_WHITE_WINE -> list.add(pos("护盾 (00:30)"));
-            case BLAZE_WALKER_WINE -> list.add(pos("岩浆行者 (00:40)"));
-            case CHORUS_WINE -> list.add(pos("瞬移 (00:15)"));
-            case OMEN_WINE -> list.add(neg("不祥之兆 (00:40)"));
-            case BOUNCE_WHITE_WINE -> list.add(pos("飞升 (00:10)"));
-            case MAGNETIC_WINE -> list.add(pos("磁吸 (00:20)"));
+            case HONEY_WINE -> list.add(pos(lang(player, "beer.honey_wine.effect.0")));
+            case APPLE_FLAVOR_WINE -> list.add(pos(lang(player, "beer.apple_flavor_wine.effect.0")));
+            case APPLE_WINE -> list.add(pos(lang(player, "beer.apple_wine.effect.0")));
+            case VITALITY_WINE -> list.add(pos(lang(player, "beer.vitality_wine.effect.0")));
+            case SUNSHINE_WINE -> list.add(pos(lang(player, "beer.sunshine_wine.effect.0")));
+            case CENTURY_WHITE_WINE -> list.add(pos(lang(player, "beer.century_white_wine.effect.0")));
+            case PINOT_NOIR -> list.add(pos(lang(player, "beer.pinot_noir.effect.0")));
+            case FLAVOR_RED_WINE -> list.add(pos(lang(player, "beer.flavor_red_wine.effect.0")));
+            case MERLOT -> list.add(pos(lang(player, "beer.merlot.effect.0")));
+            case CHERRY_WINE -> list.add(pos(lang(player, "beer.cherry_wine.effect.0")));
+            case SCUBA_DIVING -> list.add(pos(lang(player, "beer.scuba_diving.effect.0")));
+            case TROPICAL_CREEPER_WINE -> list.add(neg(lang(player, "beer.tropical_creeper_wine.effect.0")));
+            case TROPICAL_SEA_WINE -> list.add(pos(lang(player, "beer.tropical_sea_wine.effect.0")));
+            case LAMBRUSCO -> list.add(pos(lang(player, "beer.lambrusco.effect.0")));
+            case SPIDER_SPECIAL_WINE -> list.add(pos(lang(player, "beer.spider_special_wine.effect.0")));
+            case FROST_WHITE_WINE -> list.add(neg(lang(player, "beer.frost_white_wine.effect.0")));
+            case AEGIS_WHITE_WINE -> list.add(pos(lang(player, "beer.aegis_white_wine.effect.0")));
+            case BLAZE_WALKER_WINE -> list.add(pos(lang(player, "beer.blaze_walker_wine.effect.0")));
+            case CHORUS_WINE -> list.add(pos(lang(player, "beer.chorus_wine.effect.0")));
+            case OMEN_WINE -> list.add(neg(lang(player, "beer.omen_wine.effect.0")));
+            case BOUNCE_WHITE_WINE -> list.add(pos(lang(player, "beer.bounce_white_wine.effect.0")));
+            case MAGNETIC_WINE -> list.add(pos(lang(player, "beer.magnetic_wine.effect.0")));
             case HEALTH_RED_WINE -> {
-                list.add(pos("生命提升 V (00:15)"));
-                list.add(pos("生命恢复 V (00:15)"));
-                list.add(pos("瞬间治疗 V (00:15)"));
+                list.add(pos(lang(player, "beer.health_red_wine.effect.0")));
+                list.add(pos(lang(player, "beer.health_red_wine.effect.1")));
+                list.add(pos(lang(player, "beer.health_red_wine.effect.2")));
             }
-            case SPIDER_RED_WINE -> list.add(pos("免疫蜘蛛网 (00:40)"));
-            case CATGIRL_RED_WINE -> list.add(pos("猫娘 (00:25)"));
-            case ELDER_WINE -> list.add(pos("耄耋 (02:00)"));
+            case SPIDER_RED_WINE -> list.add(pos(lang(player, "beer.spider_red_wine.effect.0")));
+            case CATGIRL_RED_WINE -> list.add(pos(lang(player, "beer.catgirl_red_wine.effect.0")));
+            case ELDER_WINE -> list.add(pos(lang(player, "beer.elder_wine.effect.0")));
 
             default -> {}
         }
@@ -201,6 +193,15 @@ public final class BeerEffects {
         DrinkEffectDisplay.record(p, type, ticks, amp);
 
         com.xiaomian124.alcohol.SpecialEffectManager.markDirty();
+    }
+
+    private static String lang(Player player, String key) {
+        return LanguageManager.getRaw(player, key);
+    }
+
+    @Deprecated
+    public static List<Component> getEffectLines(BeerType type) {
+        return getEffectLines(null, type);
     }
 
     private static Component pos(String text) {

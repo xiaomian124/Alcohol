@@ -52,6 +52,19 @@ public final class ItemKeys {
 
     private ItemKeys() {}
 
+    public static java.util.List<NamespacedKey> allMarkers() {
+        java.util.List<NamespacedKey> keys = new java.util.ArrayList<>();
+        for (java.lang.reflect.Field f : ItemKeys.class.getFields()) {
+            if (!NamespacedKey.class.equals(f.getType())) continue;
+            try {
+                Object v = f.get(null);
+                if (v instanceof NamespacedKey k) keys.add(k);
+            } catch (IllegalAccessException ignored) {
+            }
+        }
+        return keys;
+    }
+
     public static void init(AlcoholPlugin plugin) {
         DRY_WHEAT       = new NamespacedKey(plugin, "dry_wheat");
         BARLEY          = new NamespacedKey(plugin, "barley");

@@ -145,29 +145,32 @@ public final class DrinkEffectDisplay {
     }
 
     private static String getEffectName(PotionEffectType type) {
-        if (type.equals(PotionEffectType.STRENGTH)) return "力量";
-        if (type.equals(PotionEffectType.REGENERATION)) return "生命恢复";
-        if (type.equals(PotionEffectType.RESISTANCE)) return "抗性提升";
-        if (type.equals(PotionEffectType.INSTANT_HEALTH)) return "瞬间治疗";
-        if (type.equals(PotionEffectType.HASTE)) return "急迫";
-        if (type.equals(PotionEffectType.JUMP_BOOST)) return "跳跃提升";
-        if (type.equals(PotionEffectType.SPEED)) return "速度";
-        if (type.equals(PotionEffectType.INVISIBILITY)) return "隐身";
-        if (type.equals(PotionEffectType.NIGHT_VISION)) return "夜视";
-        if (type.equals(PotionEffectType.FIRE_RESISTANCE)) return "防火";
-        if (type.equals(PotionEffectType.CONDUIT_POWER)) return "潮涌能量";
-        if (type.equals(PotionEffectType.DOLPHINS_GRACE)) return "海豚的恩惠";
-        if (type.equals(PotionEffectType.LUCK)) return "幸运";
-        if (type.equals(PotionEffectType.ABSORPTION)) return "伤害吸收";
-        if (type.equals(PotionEffectType.GLOWING)) return "发光";
-        if (type.equals(PotionEffectType.HEALTH_BOOST)) return "生命提升";
-        if (type.equals(PotionEffectType.HERO_OF_THE_VILLAGE)) return "村庄英雄";
-        if (type.equals(PotionEffectType.SLOW_FALLING)) return "缓降";
-        if (type.equals(PotionEffectType.LEVITATION)) return "飘浮";
-        if (type.equals(PotionEffectType.SATURATION)) return "饱和";
-        if (type.equals(PotionEffectType.WATER_BREATHING)) return "水下呼吸";
-        if (type.equals(PotionEffectType.BAD_OMEN)) return "不祥之兆";
-        if (type.equals(PotionEffectType.POISON)) return "中毒";
-        return type.getKey().getKey();
+        String key = null;
+        if (type.equals(PotionEffectType.STRENGTH)) key = "effect.name.strength";
+        else if (type.equals(PotionEffectType.REGENERATION)) key = "effect.name.regeneration";
+        else if (type.equals(PotionEffectType.RESISTANCE)) key = "effect.name.resistance";
+        else if (type.equals(PotionEffectType.INSTANT_HEALTH)) key = "effect.name.instant_health";
+        else if (type.equals(PotionEffectType.HASTE)) key = "effect.name.haste";
+        else if (type.equals(PotionEffectType.JUMP_BOOST)) key = "effect.name.jump_boost";
+        else if (type.equals(PotionEffectType.SPEED)) key = "effect.name.speed";
+        else if (type.equals(PotionEffectType.INVISIBILITY)) key = "effect.name.invisibility";
+        else if (type.equals(PotionEffectType.NIGHT_VISION)) key = "effect.name.night_vision";
+        else if (type.equals(PotionEffectType.FIRE_RESISTANCE)) key = "effect.name.fire_resistance";
+        else if (type.equals(PotionEffectType.CONDUIT_POWER)) key = "effect.name.conduit_power";
+        else if (type.equals(PotionEffectType.DOLPHINS_GRACE)) key = "effect.name.dolphins_grace";
+        else if (type.equals(PotionEffectType.LUCK)) key = "effect.name.luck";
+        else if (type.equals(PotionEffectType.ABSORPTION)) key = "effect.name.absorption";
+        else if (type.equals(PotionEffectType.GLOWING)) key = "effect.name.glowing";
+        else if (type.equals(PotionEffectType.HEALTH_BOOST)) key = "effect.name.health_boost";
+        else if (type.equals(PotionEffectType.HERO_OF_THE_VILLAGE)) key = "effect.name.hero_of_the_village";
+        else if (type.equals(PotionEffectType.SLOW_FALLING)) key = "effect.name.slow_falling";
+        else if (type.equals(PotionEffectType.LEVITATION)) key = "effect.name.levitation";
+        else if (type.equals(PotionEffectType.SATURATION)) key = "effect.name.saturation";
+        else if (type.equals(PotionEffectType.WATER_BREATHING)) key = "effect.name.water_breathing";
+        else if (type.equals(PotionEffectType.BAD_OMEN)) key = "effect.name.bad_omen";
+        else if (type.equals(PotionEffectType.POISON)) key = "effect.name.poison";
+
+        if (key == null) return type.getKey().getKey();
+        return LanguageManager.getRaw(null, key);
     }
 }

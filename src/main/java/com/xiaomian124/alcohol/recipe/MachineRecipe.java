@@ -4,4 +4,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 
-public record MachineRecipe(String name, Map<Integer, ItemStack> slots) {}
+public record MachineRecipe(String name, Map<Integer, ItemStack> slots) {
+
+    public String langKey() {
+        return name;
+    }
+}

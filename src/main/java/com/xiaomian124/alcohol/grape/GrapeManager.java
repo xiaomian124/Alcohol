@@ -114,8 +114,8 @@ public final class GrapeManager {
     private static void tickGround(GrapePlant p, Block block) {
         if (!(block.getBlockData() instanceof Ageable ageable)) return;
         int age = ageable.getAge();
-        int maxAge = ageable.getMaximumAge();
-        if (age >= maxAge) return;
+
+        if (age >= 2) return;
 
         p.growTicks++;
         if (p.growThreshold <= 0) {
@@ -125,7 +125,7 @@ public final class GrapeManager {
         if (p.growTicks >= p.growThreshold) {
             p.growTicks = 0;
             p.growThreshold = 0;
-            ageable.setAge(Math.min(maxAge, age + 1));
+            ageable.setAge(Math.min(2, age + 1));
             block.setBlockData(ageable, false);
         }
     }
@@ -186,13 +186,11 @@ public final class GrapeManager {
         GrapeType.GrowthMode mode = p.type.getGrowthMode();
         Block anchor = p.anchorLocation.getBlock();
 
-        // 地面
         if (mode == GrapeType.GrowthMode.GROUND) {
             if (anchor.getBlockData() instanceof Ageable ageable) {
                 int age = ageable.getAge();
-                int maxAge = ageable.getMaximumAge();
-                if (age >= maxAge) return false;
-                ageable.setAge(Math.min(maxAge, age + 1));
+                if (age >= 2) return false;
+                ageable.setAge(Math.min(2, age + 1));
                 anchor.setBlockData(ageable, false);
                 return true;
             }
