@@ -1,6 +1,7 @@
 package com.xiaomian124.alcohol.give;
 
 import com.xiaomian124.alcohol.ItemFactory;
+import com.xiaomian124.alcohol.LanguageManager;
 import com.xiaomian124.alcohol.gui.GuiPageCache;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -33,7 +34,8 @@ public class GiveGUI implements InventoryHolder {
         this.items = GiveRegistry.getAll();
         this.page = GuiPageCache.getGivePage(player);
         this.inventory = Bukkit.createInventory(this, SIZE,
-                Component.text("获取物品").color(NamedTextColor.DARK_GRAY));
+                Component.text(LanguageManager.getRaw(player, "gui.give.title"))
+                        .color(NamedTextColor.DARK_GRAY));
         clampPage();
         refresh();
     }
@@ -58,7 +60,7 @@ public class GiveGUI implements InventoryHolder {
             if (slot >= PREV_SLOT) break;
 
             GiveableItem item = items.get(idx);
-            ItemStack display = item.create();
+            ItemStack display = item.create(player);
             display.setAmount(1);
 
             ItemMeta meta = display.getItemMeta();
@@ -66,7 +68,9 @@ public class GiveGUI implements InventoryHolder {
                 List<Component> lore = meta.lore() == null
                         ? new ArrayList<>() : new ArrayList<>(meta.lore());
                 lore.add(Component.empty());
-                lore.add(ItemFactory.plainName("ID：" + item.id,
+                lore.add(ItemFactory.plainName(
+                        LanguageManager.getRaw(player, "gui.give.id_prefix",
+                                "id", item.id),
                         NamedTextColor.DARK_GRAY));
                 meta.lore(lore);
                 display.setItemMeta(meta);
@@ -76,8 +80,8 @@ public class GiveGUI implements InventoryHolder {
         }
 
         int totalPages = (items.size() + PER_PAGE - 1) / PER_PAGE;
-        if (page > 0) inventory.setItem(PREV_SLOT, ItemFactory.createPrevHead());
-        if (page < totalPages - 1) inventory.setItem(NEXT_SLOT, ItemFactory.createNextHead());
+        if (page > 0) inventory.setItem(PREV_SLOT, ItemFactory.createPrevHead(player));
+        if (page < totalPages - 1) inventory.setItem(NEXT_SLOT, ItemFactory.createNextHead(player));
     }
 
     private static ItemStack pane(Material mat, String name) {

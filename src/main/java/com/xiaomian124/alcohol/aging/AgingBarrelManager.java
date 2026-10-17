@@ -78,7 +78,7 @@ public final class AgingBarrelManager {
                 BeerType.MERLOT, 8));
 
         // 10. 樱桃风味酒：红葡萄汁 + 樱桃 - 15%
-        addRecipe(R(BeerType.RED_GRAPE_JUICE, ItemFactory.createCherry(), null, null,
+        addRecipe(R(BeerType.RED_GRAPE_JUICE, ItemFactory.createCherry(null), null, null,
                 BeerType.CHERRY_WINE, 15));
 
         // 11. Scuba Diving：红葡萄汁 + 糖 + 羽毛 + 烈焰粉 - 25%
@@ -94,7 +94,7 @@ public final class AgingBarrelManager {
                 BeerType.TROPICAL_SEA_WINE, 14));
 
         // 14. Lambrusco：热带草原红葡萄汁 + 蜂蜜瓶 + 樱桃 - 14%
-        addRecipe(R(BeerType.SAVANNA_RED_GRAPE_JUICE, I(Material.HONEY_BOTTLE), ItemFactory.createCherry(), null,
+        addRecipe(R(BeerType.SAVANNA_RED_GRAPE_JUICE, I(Material.HONEY_BOTTLE), ItemFactory.createCherry(null), null,
                 BeerType.LAMBRUSCO, 14));
 
         // 15. Spider特调：热带草原红葡萄汁 + 发酵蛛眼 - 10%
@@ -110,7 +110,7 @@ public final class AgingBarrelManager {
                 BeerType.AEGIS_WHITE_WINE, 7));
 
         // 18. 烈焰行者：针叶林红葡萄汁 + 蜂蜜瓶 + 樱桃 - 6%
-        addRecipe(R(BeerType.TAIGA_RED_GRAPE_JUICE, I(Material.HONEY_BOTTLE), ItemFactory.createCherry(), null,
+        addRecipe(R(BeerType.TAIGA_RED_GRAPE_JUICE, I(Material.HONEY_BOTTLE), ItemFactory.createCherry(null), null,
                 BeerType.BLAZE_WALKER_WINE, 6));
 
         // 19. 紫颂果：针叶林红葡萄汁 + 紫颂果 - 8%
@@ -149,8 +149,8 @@ public final class AgingBarrelManager {
     }
 
     private static ItemStack I(Material m) { return new ItemStack(m); }
-    private static ItemStack I(BeerType type) { return ItemFactory.createBeer(type, BeerQuality.HIGH); }
-    private static ItemStack B(BeerType type) { return ItemFactory.createBeer(type, BeerQuality.HIGH); }
+    private static ItemStack I(BeerType type) { return ItemFactory.createBeer(null, type, BeerQuality.HIGH); }
+    private static ItemStack B(BeerType type) { return ItemFactory.createBeer(null, type, BeerQuality.HIGH); }
 
     private static AgingRecipe R(BeerType input, ItemStack a, ItemStack b, ItemStack c,
                                  BeerType output, int cost) {
@@ -183,6 +183,10 @@ public final class AgingBarrelManager {
 
     public static Set<String> getRegisteredKeys() {
         return new HashSet<>(REGISTERED);
+    }
+
+    public static java.util.Collection<AgingBarrelGUI> getAll() {
+        return new ArrayList<>(BARRELS.values());
     }
 
     public static Location parseLocation(String k) {

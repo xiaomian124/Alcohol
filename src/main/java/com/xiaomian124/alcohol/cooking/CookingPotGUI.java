@@ -3,6 +3,7 @@ package com.xiaomian124.alcohol.cooking;
 import com.xiaomian124.alcohol.AlcoholPlugin;
 import com.xiaomian124.alcohol.CookingRecipe;
 import com.xiaomian124.alcohol.ItemFactory;
+import com.xiaomian124.alcohol.LanguageManager;
 import com.xiaomian124.alcohol.RecipeManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -13,6 +14,7 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -53,7 +55,8 @@ public class CookingPotGUI implements InventoryHolder {
         this.block = block;
         this.inventory = Bukkit.createInventory(
                 this, SIZE,
-                Component.text("烹饪锅").color(NamedTextColor.DARK_GRAY));
+                Component.text(LanguageManager.getRaw(null, "machine.cooking_pot.name"))
+                        .color(NamedTextColor.DARK_GRAY));
         fillBackground();
         refreshOutputSlot();
         updateTimerSlot();
@@ -199,9 +202,7 @@ public class CookingPotGUI implements InventoryHolder {
     private static boolean similarItem(ItemStack a, ItemStack b) {
         if (a == null || b == null) return false;
         if (a.getType() != b.getType()) return false;
-        Component an = a.hasItemMeta() ? a.getItemMeta().displayName() : null;
-        Component bn = b.hasItemMeta() ? b.getItemMeta().displayName() : null;
-        return Objects.equals(an, bn);
+        return ItemFactory.markersOf(a).equals(ItemFactory.markersOf(b));
     }
 
     private void refreshIndicators() {
@@ -210,36 +211,56 @@ public class CookingPotGUI implements InventoryHolder {
         updateWaterIndicator();
     }
 
+    private Player getViewer() {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.getOpenInventory().getTopInventory().getHolder() == this) {
+                return p;
+            }
+        }
+        return null;
+    }
+
     private void updateHeatIndicator() {
+        Player viewer = getViewer();
         if (hasHeat()) {
             inventory.setItem(HEAT_IND_SLOT,
                     makePane(Material.LIME_STAINED_GLASS_PANE,
-                            "热源充足", NamedTextColor.YELLOW));
+                            LanguageManager.getRaw(viewer, "gui.cooking_pot.heat_ok"),
+                            NamedTextColor.YELLOW));
         } else if (activeRecipe != null) {
             inventory.setItem(HEAT_IND_SLOT,
                     makePane(Material.RED_STAINED_GLASS_PANE,
-                            "下方缺少热源", NamedTextColor.RED));
+                            LanguageManager.getRaw(viewer, "gui.cooking_pot.heat_missing"),
+                            NamedTextColor.RED));
         } else {
             inventory.setItem(HEAT_IND_SLOT,
                     makePane(Material.GRAY_STAINED_GLASS_PANE,
-                            "下方缺少热源", NamedTextColor.RED));
+                            LanguageManager.getRaw(viewer, "gui.cooking_pot.heat_missing"),
+                            NamedTextColor.RED));
         }
     }
 
     private void updateWaterIndicator() {
+        Player viewer = getViewer();
         int water = CookingPotManager.getWater(block.getLocation());
         if (water > 0) {
             inventory.setItem(WATER_IND_SLOT,
                     makePane(Material.LIME_STAINED_GLASS_PANE,
-                            "储水量 " + water + "/3", NamedTextColor.YELLOW));
+                            LanguageManager.getRaw(viewer, "gui.cooking_pot.water_amount",
+                                    "amount", String.valueOf(water)),
+                            NamedTextColor.YELLOW));
         } else if (activeRecipe != null) {
             inventory.setItem(WATER_IND_SLOT,
                     makePane(Material.RED_STAINED_GLASS_PANE,
-                            "储水量 0/3", NamedTextColor.RED));
+                            LanguageManager.getRaw(viewer, "gui.cooking_pot.water_amount",
+                                    "amount", "0"),
+                            NamedTextColor.RED));
         } else {
             inventory.setItem(WATER_IND_SLOT,
                     makePane(Material.GRAY_STAINED_GLASS_PANE,
-                            "储水量 0/3", NamedTextColor.RED));
+                            LanguageManager.getRaw(viewer, "gui.cooking_pot.water_amount",
+                                    "amount", "0"),
+                            NamedTextColor.RED));
         }
     }
 
@@ -255,6 +276,13 @@ public class CookingPotGUI implements InventoryHolder {
         ItemStack item = outputQueue.get(0).clone();
         item.setAmount(displayCount);
         inventory.setItem(OUTPUT_SLOT, item);
+    }
+
+    public static int[] getDropSlots() {
+        int[] result = new int[INPUT_SLOTS.length + 1];
+        System.arraycopy(INPUT_SLOTS, 0, result, 0, INPUT_SLOTS.length);
+        result[INPUT_SLOTS.length] = OUTPUT_SLOT;
+        return result;
     }
 
     public void syncFromInventory() {
@@ -281,10 +309,11 @@ public class CookingPotGUI implements InventoryHolder {
     }
 
     private void updateTimerSlot() {
+        Player viewer = getViewer();
         if (activeRecipe != null && remainingTicks > 0) {
-            inventory.setItem(TIMER_SLOT, ItemFactory.createTimerHead(remainingTicks));
+            inventory.setItem(TIMER_SLOT, ItemFactory.createTimerHead(viewer, remainingTicks));
         } else {
-            inventory.setItem(TIMER_SLOT, ItemFactory.createTimerHeadIdle());
+            inventory.setItem(TIMER_SLOT, ItemFactory.createTimerHeadIdle(viewer));
         }
     }
 

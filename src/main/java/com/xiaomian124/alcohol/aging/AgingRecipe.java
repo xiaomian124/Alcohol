@@ -1,6 +1,7 @@
 package com.xiaomian124.alcohol.aging;
 
 import com.xiaomian124.alcohol.BeerType;
+import com.xiaomian124.alcohol.ItemFactory;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -40,8 +41,6 @@ public record AgingRecipe(
     private static boolean similar(ItemStack a, ItemStack b) {
         if (a == null || b == null) return false;
         if (a.getType() != b.getType()) return false;
-        var an = a.hasItemMeta() ? a.getItemMeta().displayName() : null;
-        var bn = b.hasItemMeta() ? b.getItemMeta().displayName() : null;
-        return java.util.Objects.equals(an, bn);
+        return ItemFactory.markersOf(a).equals(ItemFactory.markersOf(b));
     }
 }

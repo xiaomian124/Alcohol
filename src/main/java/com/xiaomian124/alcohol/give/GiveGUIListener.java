@@ -1,5 +1,6 @@
 package com.xiaomian124.alcohol.give;
 
+import com.xiaomian124.alcohol.LanguageManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
@@ -50,7 +51,7 @@ public class GiveGUIListener implements Listener {
         if (item == null) return;
         if (!(event.getWhoClicked() instanceof Player p)) return;
 
-        ItemStack give = item.create();
+        ItemStack give = item.create(p);
         var leftover = p.getInventory().addItem(give);
         boolean dropped = !leftover.isEmpty();
         if (dropped) {
@@ -62,8 +63,7 @@ public class GiveGUIListener implements Listener {
         p.playSound(p.getLocation(), Sound.ENTITY_CHICKEN_EGG, 1.0f, 1.0f);
 
         if (dropped) {
-            p.sendMessage(Component.text("你的背包已满，部分物品已掉落在地上。")
-                    .color(NamedTextColor.YELLOW));
+            p.sendMessage(LanguageManager.get(p, "cmd.give.backpack_full_target"));
         }
     }
 }

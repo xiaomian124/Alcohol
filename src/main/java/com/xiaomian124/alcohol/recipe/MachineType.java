@@ -1,22 +1,29 @@
 package com.xiaomian124.alcohol.recipe;
 
+import com.xiaomian124.alcohol.LanguageManager;
 import org.bukkit.Material;
 
 public enum MachineType {
 
-    COOKING_POT("烹饪锅", Material.CAULDRON),
-    BREWING_BOX("酿造炉", Material.SMOKER),
-    APPLE_PRESS("苹果压榨器", Material.LOOM),
-    AGING_BARREL("陈酿桶", Material.BARREL),
-    GRAPE_BASIN("葡萄藤盆", Material.COMPOSTER),
-    MUSIC_PLAYER("吧台音乐播放器", Material.JUKEBOX);
+    COOKING_POT(Material.CAULDRON),
+    BREWING_BOX(Material.SMOKER),
+    APPLE_PRESS(Material.LOOM),
+    AGING_BARREL(Material.BARREL),
+    GRAPE_BASIN(Material.COMPOSTER),
+    MUSIC_PLAYER(Material.JUKEBOX);
 
-    public final String displayName;
     public final Material icon;
 
-    MachineType(String displayName, Material icon) {
-        this.displayName = displayName;
+    MachineType(Material icon) {
         this.icon = icon;
+    }
+
+    public String langKey() {
+        return "machine." + name().toLowerCase() + ".name";
+    }
+
+    public String getDisplayName() {
+        return LanguageManager.getRaw(null, langKey());
     }
 
     public static MachineType byName(String name) {

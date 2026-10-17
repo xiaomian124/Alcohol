@@ -3,6 +3,7 @@ package com.xiaomian124.alcohol.entity;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import com.xiaomian124.alcohol.AlcoholPlugin;
+import com.xiaomian124.alcohol.LanguageManager;
 import io.papermc.paper.datacomponent.item.ResolvableProfile;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -80,7 +81,7 @@ public class CatGirlManager {
             mannequin.setProfile(resolvable);
         } catch (Exception e) {
             AlcoholPlugin.getInstance().getLogger()
-                    .warning("猫娘皮肤设置失败: " + e.getMessage());
+                    .warning("Failed to set catgirl skin: " + e.getMessage());
         }
     }
 
@@ -132,17 +133,18 @@ public class CatGirlManager {
     }
 
     private static void startDialog(Player player) {
-        sendChat(player, "你好呀！" + player.getName());
+        sendChat(player, LanguageManager.getRaw(player, "msg.catgirl.greeting",
+                "player", player.getName()));
 
         Bukkit.getScheduler().runTaskLater(AlcoholPlugin.getInstance(), () -> {
             if (player.isOnline()) {
-                sendChat(player, "我调的这杯酒好喝吗❤，好喝我下次再给你调一杯");
+                sendChat(player, LanguageManager.getRaw(player, "msg.catgirl.compliment"));
             }
         }, 60L);
 
         Bukkit.getScheduler().runTaskLater(AlcoholPlugin.getInstance(), () -> {
             if (player.isOnline()) {
-                sendChat(player, "下次再见咯！拜拜！");
+                sendChat(player, LanguageManager.getRaw(player, "msg.catgirl.farewell"));
             }
         }, 440L);
     }

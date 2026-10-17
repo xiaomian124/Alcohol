@@ -1,6 +1,7 @@
 package com.xiaomian124.alcohol.cooking;
 
 import com.xiaomian124.alcohol.AlcoholPlugin;
+import com.xiaomian124.alcohol.LanguageManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -51,30 +52,31 @@ public class CookingPotListener implements Listener {
 
             if (hand.getType() == Material.WATER_BUCKET) {
                 if (water >= 3) {
-                    player.sendActionBar(Component.text("烹饪锅储水量已满")
-                            .color(NamedTextColor.RED));
+                    player.sendActionBar(LanguageManager.get(player,
+                            "msg.cooking_pot.water_full"));
                     return;
                 }
                 CookingPotManager.setWater(block.getLocation(), 3);
                 CookingPotManager.updateCauldronBlock(block, 3);
                 hand.setType(Material.BUCKET);
-                player.sendActionBar(Component.text("烹饪锅储水量 3/3")
-                        .color(NamedTextColor.YELLOW));
+                player.sendActionBar(LanguageManager.get(player,
+                        "msg.cooking_pot.water_now", "amount", "3"));
                 return;
             }
 
             if (isWaterBottle(hand)) {
                 if (water >= 3) {
-                    player.sendActionBar(Component.text("烹饪锅储水量已满")
-                            .color(NamedTextColor.RED));
+                    player.sendActionBar(LanguageManager.get(player,
+                            "msg.cooking_pot.water_full"));
                     return;
                 }
                 int newWater = water + 1;
                 CookingPotManager.setWater(block.getLocation(), newWater);
                 CookingPotManager.updateCauldronBlock(block, newWater);
                 hand.setType(Material.GLASS_BOTTLE);
-                player.sendActionBar(Component.text("烹饪锅储水量 " + newWater + "/3")
-                        .color(NamedTextColor.YELLOW));
+                player.sendActionBar(LanguageManager.get(player,
+                        "msg.cooking_pot.water_now",
+                        "amount", String.valueOf(newWater)));
                 player.playSound(player.getLocation(),
                         Sound.BLOCK_POINTED_DRIPSTONE_DRIP_WATER_INTO_CAULDRON,
                         1.0f, 1.0f);

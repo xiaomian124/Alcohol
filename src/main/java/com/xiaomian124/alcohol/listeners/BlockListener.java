@@ -7,6 +7,7 @@ import com.xiaomian124.alcohol.aging.AgingBarrelGUI;
 import com.xiaomian124.alcohol.aging.AgingBarrelManager;
 import com.xiaomian124.alcohol.apple.ApplePressGUI;
 import com.xiaomian124.alcohol.apple.ApplePressManager;
+import com.xiaomian124.alcohol.brewing.BrewingBoxGUI;
 import com.xiaomian124.alcohol.brewing.BrewingBoxManager;
 import com.xiaomian124.alcohol.cooking.CookingPotGUI;
 import com.xiaomian124.alcohol.cooking.CookingPotManager;
@@ -16,10 +17,12 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.TileState;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -85,103 +88,102 @@ public class BlockListener implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
+        Player player = event.getPlayer();
 
         if (CookingPotManager.isCookingPot(block.getLocation())) {
             CookingPotGUI gui = CookingPotManager.get(block.getLocation());
             if (gui != null) {
-                for (int slot : CookingPotGUI.INPUT_SLOTS) {
-                    ItemStack c = gui.getInventory().getItem(slot);
-                    if (c != null && c.getType() != Material.AIR) {
-                        block.getWorld().dropItemNaturally(
-                                block.getLocation().add(0.5, 0.5, 0.5), c);
-                    }
-                }
-                ItemStack out = gui.getInventory().getItem(CookingPotGUI.OUTPUT_SLOT);
-                if (out != null && out.getType() != Material.AIR) {
-                    block.getWorld().dropItemNaturally(
-                            block.getLocation().add(0.5, 0.5, 0.5), out);
-                }
+                dropSlots(block, gui.getInventory(), CookingPotGUI.getDropSlots());
             }
             CookingPotManager.unregister(block.getLocation());
 
             event.setDropItems(false);
             block.getWorld().dropItemNaturally(
                     block.getLocation().add(0.5, 0.5, 0.5),
-                    ItemFactory.createCookingPot());
+                    ItemFactory.createCookingPot(player));
             return;
         }
 
         if (ApplePressManager.isApplePress(block.getLocation())) {
             ApplePressGUI gui = ApplePressManager.get(block.getLocation());
             if (gui != null) {
-                for (int slot = 0; slot < ApplePressGUI.SIZE; slot++) {
-                    if (gui.isHeadSlot(slot)) continue;
-                    ItemStack c = gui.getInventory().getItem(slot);
-                    if (c != null && c.getType() != Material.AIR) {
-                        block.getWorld().dropItemNaturally(
-                                block.getLocation().add(0.5, 0.5, 0.5), c);
-                    }
-                }
+                dropSlots(block, gui.getInventory(), ApplePressGUI.getDropSlots());
             }
             ApplePressManager.unregister(block.getLocation());
 
             event.setDropItems(false);
             block.getWorld().dropItemNaturally(
                     block.getLocation().add(0.5, 0.5, 0.5),
-                    ItemFactory.createApplePress());
+                    ItemFactory.createApplePress(player));
             return;
         }
 
         if (AgingBarrelManager.isAgingBarrel(block.getLocation())) {
             AgingBarrelGUI gui = AgingBarrelManager.get(block.getLocation());
             if (gui != null) {
-                for (int slot = 0; slot < AgingBarrelGUI.SIZE; slot++) {
-                    if (gui.isHeadSlot(slot) || gui.isStorageDisplaySlot(slot)) continue;
-                    ItemStack c = gui.getInventory().getItem(slot);
-                    if (c != null && c.getType() != Material.AIR) {
-                        block.getWorld().dropItemNaturally(
-                                block.getLocation().add(0.5, 0.5, 0.5), c);
-                    }
-                }
+                dropSlots(block, gui.getInventory(), AgingBarrelGUI.getDropSlots());
             }
             AgingBarrelManager.unregister(block.getLocation());
 
             event.setDropItems(false);
             block.getWorld().dropItemNaturally(
                     block.getLocation().add(0.5, 0.5, 0.5),
-                    ItemFactory.createAgingBarrel());
+                    ItemFactory.createAgingBarrel(player));
             return;
         }
 
         if (GrapeBasinManager.isGrapeBasin(block.getLocation())) {
             GrapeBasinManager.unregister(block.getLocation());
-
             event.setDropItems(false);
             block.getWorld().dropItemNaturally(
                     block.getLocation().add(0.5, 0.5, 0.5),
-                    ItemFactory.createGrapeBasin());
+                    ItemFactory.createGrapeBasin(player));
             return;
         }
 
         BlockState state = block.getState();
-        if (state instanceof TileState tileState) {
-            var pdc = tileState.getPersistentDataContainer();
+        if (state instanceof TileState tileState
+                && tileState.getPersistentDataContainer()
+                .has(ItemKeys.BREWING_BOX, PersistentDataType.BYTE)) {
 
-            if (pdc.has(ItemKeys.BREWING_BOX, PersistentDataType.BYTE)) {
-                BrewingBoxManager.remove(block.getLocation());
-                event.setDropItems(false);
-                block.getWorld().dropItemNaturally(
-                        block.getLocation().add(0.5, 0.5, 0.5),
-                        ItemFactory.createBrewingBox());
-                return;
+            BrewingBoxGUI gui = BrewingBoxManager.get(block.getLocation());
+            if (gui != null) {
+                dropSlots(block, gui.getInventory(), BrewingBoxGUI.getDropSlots());
+
+                for (ItemStack pending : gui.getPendingOutputs()) {
+                    if (pending != null && pending.getType() != Material.AIR) {
+                        block.getWorld().dropItemNaturally(
+                                block.getLocation().add(0.5, 0.5, 0.5), pending);
+                    }
+                }
             }
+            BrewingBoxManager.remove(block.getLocation());
 
-            if (pdc.has(ItemKeys.MUSIC_PLAYER, PersistentDataType.BYTE)) {
-                MusicPlayerManager.remove(block.getLocation());
-                event.setDropItems(false);
+            event.setDropItems(false);
+            block.getWorld().dropItemNaturally(
+                    block.getLocation().add(0.5, 0.5, 0.5),
+                    ItemFactory.createBrewingBox(player));
+            return;
+        }
+
+        if (state instanceof TileState tileState
+                && tileState.getPersistentDataContainer()
+                .has(ItemKeys.MUSIC_PLAYER, PersistentDataType.BYTE)) {
+
+            MusicPlayerManager.remove(block.getLocation());
+            event.setDropItems(false);
+            block.getWorld().dropItemNaturally(
+                    block.getLocation().add(0.5, 0.5, 0.5),
+                    ItemFactory.createMusicPlayer(player));
+        }
+    }
+
+    private static void dropSlots(Block block, Inventory inv, int[] slots) {
+        for (int slot : slots) {
+            ItemStack item = inv.getItem(slot);
+            if (item != null && item.getType() != Material.AIR) {
                 block.getWorld().dropItemNaturally(
-                        block.getLocation().add(0.5, 0.5, 0.5),
-                        ItemFactory.createMusicPlayer());
+                        block.getLocation().add(0.5, 0.5, 0.5), item);
             }
         }
     }

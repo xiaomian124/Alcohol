@@ -2,6 +2,7 @@ package com.xiaomian124.alcohol.listeners;
 
 import com.xiaomian124.alcohol.AlcoholPlugin;
 import com.xiaomian124.alcohol.BeerType;
+import com.xiaomian124.alcohol.LanguageManager;
 import com.xiaomian124.alcohol.SpecialEffectManager;
 import com.xiaomian124.alcohol.entity.CatGirlManager;
 import org.bukkit.Bukkit;
@@ -81,6 +82,7 @@ public class SpecialEffectListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
+        LanguageManager.clearCache(event.getPlayer().getUniqueId());
         SpecialEffectManager.removeAttachedOnQuit(event.getPlayer());
     }
 }

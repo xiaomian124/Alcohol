@@ -5,6 +5,7 @@ import com.xiaomian124.alcohol.BeerQuality;
 import com.xiaomian124.alcohol.BeerType;
 import com.xiaomian124.alcohol.BrewingRecipe;
 import com.xiaomian124.alcohol.ItemFactory;
+import com.xiaomian124.alcohol.LanguageManager;
 import com.xiaomian124.alcohol.RecipeManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -15,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -71,7 +73,8 @@ public class BrewingBoxGUI implements InventoryHolder {
         this.plugin = plugin;
         this.block = block;
         this.inventory = Bukkit.createInventory(this, SIZE,
-                Component.text("酿造炉").color(NamedTextColor.DARK_GRAY));
+                Component.text(LanguageManager.getRaw(null, "machine.brewing_box.name"))
+                        .color(NamedTextColor.DARK_GRAY));
         fillBackground();
         refreshOutputSlot();
         updateTimerSlot();
@@ -294,9 +297,7 @@ public class BrewingBoxGUI implements InventoryHolder {
     private static boolean similarItem(ItemStack a, ItemStack b) {
         if (a == null || b == null) return false;
         if (a.getType() != b.getType()) return false;
-        Component an = a.hasItemMeta() ? a.getItemMeta().displayName() : null;
-        Component bn = b.hasItemMeta() ? b.getItemMeta().displayName() : null;
-        return Objects.equals(an, bn);
+        return ItemFactory.markersOf(a).equals(ItemFactory.markersOf(b));
     }
 
     private void refreshOutputSlot() {
@@ -383,23 +384,37 @@ public class BrewingBoxGUI implements InventoryHolder {
         fuelConsumed = 0;
     }
 
+    private Player getViewer() {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.getOpenInventory().getTopInventory().getHolder() == this) {
+                return p;
+            }
+        }
+        return null;
+    }
+
     private void updateWaterIndicator() {
+        Player viewer = getViewer();
         if (hasWater()) {
             inventory.setItem(WATER_IND_SLOT,
                     makePane(Material.LIME_STAINED_GLASS_PANE,
-                            "水量充足", NamedTextColor.YELLOW));
+                            LanguageManager.getRaw(viewer, "gui.brewing_box.water_ok"),
+                            NamedTextColor.YELLOW));
         } else if (activeRecipe != null) {
             inventory.setItem(WATER_IND_SLOT,
                     makePane(Material.RED_STAINED_GLASS_PANE,
-                            "缺少水量", NamedTextColor.RED));
+                            LanguageManager.getRaw(viewer, "gui.brewing_box.water_missing"),
+                            NamedTextColor.RED));
         } else {
             inventory.setItem(WATER_IND_SLOT,
                     makePane(Material.GRAY_STAINED_GLASS_PANE,
-                            "缺少水量", NamedTextColor.RED));
+                            LanguageManager.getRaw(viewer, "gui.brewing_box.water_missing"),
+                            NamedTextColor.RED));
         }
     }
 
     private void updateFuelIndicator() {
+        Player viewer = getViewer();
         boolean hasFuel = fuelBurnTicks > 0;
         if (!hasFuel) {
             ItemStack fuel = inventory.getItem(FUEL_SLOT);
@@ -408,23 +423,27 @@ public class BrewingBoxGUI implements InventoryHolder {
         if (hasFuel) {
             inventory.setItem(FUEL_IND_SLOT,
                     makePane(Material.LIME_STAINED_GLASS_PANE,
-                            "燃料充足", NamedTextColor.YELLOW));
+                            LanguageManager.getRaw(viewer, "gui.brewing_box.fuel_ok"),
+                            NamedTextColor.YELLOW));
         } else if (activeRecipe != null) {
             inventory.setItem(FUEL_IND_SLOT,
                     makePane(Material.RED_STAINED_GLASS_PANE,
-                            "缺少燃料", NamedTextColor.RED));
+                            LanguageManager.getRaw(viewer, "gui.brewing_box.fuel_missing"),
+                            NamedTextColor.RED));
         } else {
             inventory.setItem(FUEL_IND_SLOT,
                     makePane(Material.GRAY_STAINED_GLASS_PANE,
-                            "缺少燃料", NamedTextColor.RED));
+                            LanguageManager.getRaw(viewer, "gui.brewing_box.fuel_missing"),
+                            NamedTextColor.RED));
         }
     }
 
     private void updateTimerSlot() {
+        Player viewer = getViewer();
         if (activeRecipe != null && remainingTicks > 0) {
-            inventory.setItem(TIMER_SLOT, ItemFactory.createTimerHead(remainingTicks));
+            inventory.setItem(TIMER_SLOT, ItemFactory.createTimerHead(viewer, remainingTicks));
         } else {
-            inventory.setItem(TIMER_SLOT, ItemFactory.createTimerHeadIdle());
+            inventory.setItem(TIMER_SLOT, ItemFactory.createTimerHeadIdle(viewer));
         }
     }
 
@@ -433,7 +452,9 @@ public class BrewingBoxGUI implements InventoryHolder {
         ItemMeta meta = clock.getItemMeta();
         NamedTextColor color = pressure >= PRESSURE_MAX
                 ? NamedTextColor.RED : NamedTextColor.YELLOW;
-        meta.displayName(ItemFactory.plainName("气压 " + pressure + "%", color));
+        meta.displayName(ItemFactory.plainName(
+                LanguageManager.getRaw(getViewer(), "gui.brewing_box.pressure",
+                        "pressure", String.valueOf(pressure)), color));
         clock.setItemMeta(meta);
         inventory.setItem(PRESSURE_SLOT, clock);
     }
@@ -471,6 +492,16 @@ public class BrewingBoxGUI implements InventoryHolder {
 
     private static boolean isFuel(ItemStack item) {
         return item.getType() == Material.COAL || item.getType() == Material.CHARCOAL;
+    }
+
+    public static int[] getDropSlots() {
+        return new int[]{
+                INGREDIENT_SLOTS[0],
+                INGREDIENT_SLOTS[1],
+                INGREDIENT_SLOTS[2],
+                WATER_SLOT,
+                FUEL_SLOT
+        };
     }
 
     public boolean isBrewing() { return activeRecipe != null; }

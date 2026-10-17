@@ -1,0 +1,23 @@
+# ===============================
+#  Alcohol Plugin Configuration
+# ===============================
+
+# ===============================
+# 默认语言 / Default locale
+
+# 设置语言后请 reload 插件或者重启服务器，部分文字显示会读取玩家客户端的语言来显示。
+# ★ 语言显示都与服务器默认语言、插件语言、玩家客户端语言有关，推荐都使用统一一个语言游玩体验效果最佳。
+# ⚠ 强烈建议使用插件前设定你地区的语言，以免出现 GUI / 物品 / 提示 等语言显示问题。
+# ⚠ 如果更换了语言，你可以输入 “/alcohol refresh” 来重刷玩家背包和容器的物品，以及破坏机器重新放置，然后再重进游戏。
+# 请输入适合你地区的语言，默认为 en_US。没有你所在地区的语言？
+# 在这里贡献你地区的语言：https://crowdin.com/project/alcohol-plugin/invite?h=6860356982471666d58e2f04d2e76e872911003
+
+# After setting the language, please reload the plugin or restart the server. Some text will be displayed using the player's client language.
+# ★ Language display is related to the server's default language, the plugin language, and the player's client language. It is recommended to use the same language for all of them to get the best gameplay experience.
+# ⚠ It is strongly recommended to set your region's language before using the plugin, to avoid language display issues with GUIs / items / messages, etc.
+# ⚠ If you change the language, you can enter "/alcohol refresh" to refresh items in players' inventories and containers, and break and replace machines, then rejoin the game.
+# Please enter the language suitable for your region; the default is en_US. Don't see your region's language?
+# Contribute your region's language here: https://crowdin.com/project/alcohol-plugin/invite?h=6860356982471666d58e2f04d2e76e872911003
+
+default-locale: en_US
+# ===============================

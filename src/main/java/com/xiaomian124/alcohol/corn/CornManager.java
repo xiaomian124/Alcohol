@@ -173,10 +173,7 @@ public final class CornManager {
         BlockState state = block.getState();
         if (!(state instanceof Skull skull)) return;
 
-        ItemStack temp = ItemFactory.createCorn();
-        if (temp.getItemMeta() instanceof SkullMeta sm) {
-            skull.setOwnerProfile(sm.getOwnerProfile());
-        }
+        skull.setOwnerProfile(ItemFactory.cornHeadProfile());
         skull.setRotation(BlockFace.NORTH);
 
         skull.getPersistentDataContainer().set(

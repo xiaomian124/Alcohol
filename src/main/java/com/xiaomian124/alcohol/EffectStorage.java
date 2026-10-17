@@ -31,7 +31,7 @@ public final class EffectStorage {
     public static void saveAll() {
         if (file == null) {
             AlcoholPlugin.getInstance().getLogger()
-                    .warning("EffectStorage.file 为 null");
+                    .warning("EffectStorage.file is null");
             return;
         }
 
@@ -80,7 +80,7 @@ public final class EffectStorage {
             cfg.save(file);
         } catch (IOException e) {
             AlcoholPlugin.getInstance().getLogger()
-                    .warning("保存 effects.yml 失败: " + e.getMessage());
+                    .warning("Failed to save effects.yml: " + e.getMessage());
         }
     }
 

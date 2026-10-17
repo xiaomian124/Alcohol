@@ -41,8 +41,6 @@ public record BrewingRecipe(
     private static boolean similar(ItemStack a, ItemStack b) {
         if (a == null || b == null) return false;
         if (a.getType() != b.getType()) return false;
-        Component an = a.hasItemMeta() ? a.getItemMeta().displayName() : null;
-        Component bn = b.hasItemMeta() ? b.getItemMeta().displayName() : null;
-        return Objects.equals(an, bn);
+        return ItemFactory.markersOf(a).equals(ItemFactory.markersOf(b));
     }
 }

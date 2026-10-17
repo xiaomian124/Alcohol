@@ -2,11 +2,13 @@ package com.xiaomian124.alcohol.music;
 
 import com.xiaomian124.alcohol.AlcoholPlugin;
 import com.xiaomian124.alcohol.ItemFactory;
+import com.xiaomian124.alcohol.LanguageManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -33,8 +35,18 @@ public class MusicPlayerGUI implements InventoryHolder {
         this.plugin = plugin;
         this.location = loc.clone();
         this.inventory = Bukkit.createInventory(this, SIZE,
-                Component.text("吧台音乐播放器").color(NamedTextColor.DARK_GRAY));
+                Component.text(LanguageManager.getRaw(null, "machine.music_player.name"))
+                        .color(NamedTextColor.DARK_GRAY));
         refresh();
+    }
+
+    private Player getViewer() {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.getOpenInventory().getTopInventory().getHolder() == this) {
+                return p;
+            }
+        }
+        return null;
     }
 
     public void refresh() {
@@ -49,9 +61,9 @@ public class MusicPlayerGUI implements InventoryHolder {
 
         inventory.setItem(DISC_SLOT, buildDiscItem(mp));
 
-        inventory.setItem(PREV_SLOT, ItemFactory.createPrevHead());
-        inventory.setItem(PLAY_SLOT, ItemFactory.createPlayPauseHead(mp.playing));
-        inventory.setItem(NEXT_SLOT, ItemFactory.createNextHead());
+        inventory.setItem(PREV_SLOT, ItemFactory.createPrevHead(getViewer()));
+        inventory.setItem(PLAY_SLOT, ItemFactory.createPlayPauseHead(getViewer(), mp.playing));
+        inventory.setItem(NEXT_SLOT, ItemFactory.createNextHead(getViewer()));
     }
 
     private ItemStack buildDiscItem(MusicPlayer mp) {
@@ -65,7 +77,10 @@ public class MusicPlayerGUI implements InventoryHolder {
         String author = MusicPlayerManager.getAuthor(mp);
 
         if (showingLoopMode) {
-            String mode = mp.singleLoop ? "单曲" : "列表";
+            Player viewer = getViewer();
+            String mode = mp.singleLoop
+                    ? LanguageManager.getRaw(viewer, "gui.music.loop_single")
+                    : LanguageManager.getRaw(viewer, "gui.music.loop_list");
             meta.displayName(ItemFactory.plainName(title + " | " + mode,
                     NamedTextColor.GRAY));
         } else {
@@ -75,7 +90,9 @@ public class MusicPlayerGUI implements InventoryHolder {
         List<Component> lore = List.of(
                 ItemFactory.plainName(author, NamedTextColor.GRAY),
                 Component.empty(),
-                ItemFactory.plainName("点击切换循环模式", NamedTextColor.DARK_GRAY)
+                ItemFactory.plainName(
+                        LanguageManager.getRaw(getViewer(), "gui.music.toggle_loop"),
+                        NamedTextColor.DARK_GRAY)
         );
         meta.lore(lore);
 

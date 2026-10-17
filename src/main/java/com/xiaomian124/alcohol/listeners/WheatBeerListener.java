@@ -6,6 +6,7 @@ import com.xiaomian124.alcohol.BeerQuality;
 import com.xiaomian124.alcohol.BeerType;
 import com.xiaomian124.alcohol.ItemFactory;
 import com.xiaomian124.alcohol.ItemKeys;
+import com.xiaomian124.alcohol.LanguageManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -121,10 +122,8 @@ public class WheatBeerListener implements Listener {
         if (!isJuice && now < cooldownEnd) {
             event.setCancelled(true);
             long remainSec = (cooldownEnd - now + 999) / 1000;
-            player.sendActionBar(
-                    Component.text("你一下子喝不了那么多，再等 "
-                                    + remainSec + " 秒吧")
-                            .color(NamedTextColor.RED));
+            player.sendActionBar(LanguageManager.get(player,
+                    "msg.drink.cooldown", "seconds", String.valueOf(remainSec)));
             player.playSound(player.getLocation(),
                     Sound.ENTITY_PLAYER_BURP, 1.0f, 1.0f);
             return;
@@ -132,9 +131,7 @@ public class WheatBeerListener implements Listener {
 
         if (!isJuice && player.getFoodLevel() >= 20) {
             event.setCancelled(true);
-            player.sendActionBar(
-                    Component.text("你现在喝不下了")
-                            .color(NamedTextColor.RED));
+            player.sendActionBar(LanguageManager.get(player, "msg.drink.too_full"));
             player.playSound(player.getLocation(),
                     Sound.ENTITY_PLAYER_BURP, 1.0f, 1.0f);
             return;
@@ -166,19 +163,15 @@ public class WheatBeerListener implements Listener {
 
         if (!isJuice && now < cooldownEnd) {
             long remainSec = (cooldownEnd - now + 999) / 1000;
-            player.sendActionBar(
-                    Component.text("你一下子喝不了那么多，再等 "
-                                    + remainSec + " 秒吧")
-                            .color(NamedTextColor.RED));
+            player.sendActionBar(LanguageManager.get(player,
+                    "msg.drink.cooldown", "seconds", String.valueOf(remainSec)));
             player.playSound(player.getLocation(),
                     Sound.ENTITY_PLAYER_BURP, 1.0f, 1.0f);
             return;
         }
 
         if (!isJuice && player.getFoodLevel() >= 20) {
-            player.sendActionBar(
-                    Component.text("你现在喝不下了")
-                            .color(NamedTextColor.RED));
+            player.sendActionBar(LanguageManager.get(player, "msg.drink.too_full"));
             player.playSound(player.getLocation(),
                     Sound.ENTITY_PLAYER_BURP, 1.0f, 1.0f);
             return;

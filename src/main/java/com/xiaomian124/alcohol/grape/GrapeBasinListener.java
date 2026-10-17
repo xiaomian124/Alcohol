@@ -4,6 +4,7 @@ import com.xiaomian124.alcohol.AlcoholPlugin;
 import com.xiaomian124.alcohol.BeerQuality;
 import com.xiaomian124.alcohol.ItemFactory;
 import com.xiaomian124.alcohol.ItemKeys;
+import com.xiaomian124.alcohol.LanguageManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -58,7 +59,7 @@ public class GrapeBasinListener implements Listener {
         event.setDropItems(false);
         block.getWorld().dropItemNaturally(
                 block.getLocation().add(0.5, 0.5, 0.5),
-                ItemFactory.createGrapeBasin());
+                ItemFactory.createGrapeBasin(event.getPlayer()));
     }
 
     @EventHandler
@@ -135,17 +136,13 @@ public class GrapeBasinListener implements Listener {
 
     private void takeJuice(Player player, Block block, GrapeBasin basin, ItemStack bottle) {
         if (basin.juiceCount <= 0) {
-            player.sendActionBar(
-                    Component.text("还没有可以取的葡萄汁")
-                            .color(NamedTextColor.RED));
+            player.sendActionBar(LanguageManager.get(player, "msg.grape_basin.no_juice"));
             return;
         }
 
         GrapeType savedType = basin.grapeType;
         if (savedType == null) {
-            player.sendActionBar(
-                    Component.text("还没有可以取的葡萄汁")
-                            .color(NamedTextColor.RED));
+            player.sendActionBar(LanguageManager.get(player, "msg.grape_basin.no_juice"));
             return;
         }
 
@@ -173,11 +170,11 @@ public class GrapeBasinListener implements Listener {
         player.playSound(block.getLocation(),
                 Sound.ITEM_BOTTLE_FILL, 1.0f, 1.0f);
 
-        String message = "获得了" + savedType.getGrapeName() + "汁";
+        Component message = LanguageManager.get(player, "msg.grape_basin.obtained",
+                "grape", savedType.getGrapeName());
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (player.isOnline()) {
-                player.sendActionBar(
-                        Component.text(message).color(NamedTextColor.YELLOW));
+                player.sendActionBar(message);
             }
         }, 1L);
     }

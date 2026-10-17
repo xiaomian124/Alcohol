@@ -99,6 +99,10 @@ public final class CookingPotManager {
         return new HashSet<>(REGISTERED);
     }
 
+    public static java.util.Collection<CookingPotGUI> getAll() {
+        return new java.util.ArrayList<>(POTS.values());
+    }
+
     public static Location parseLocation(String key) {
         String[] parts = key.split(":");
         if (parts.length != 4) return null;

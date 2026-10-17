@@ -4,6 +4,7 @@ import com.xiaomian124.alcohol.BeerQuality;
 import com.xiaomian124.alcohol.BeerType;
 import com.xiaomian124.alcohol.ItemFactory;
 import com.xiaomian124.alcohol.grape.GrapeType;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -23,52 +24,52 @@ public final class GiveRegistry {
         ITEMS.clear();
         BY_ID.clear();
 
-        register("cooking_pot",   "烹饪锅",        ItemFactory::createCookingPot);
-        register("brewing_box",   "酿造炉",        ItemFactory::createBrewingBox);
-        register("apple_press",   "苹果压榨器",    ItemFactory::createApplePress);
-        register("aging_barrel",  "陈酿桶",        ItemFactory::createAgingBarrel);
-        register("grape_basin",   "葡萄藤盆",      ItemFactory::createGrapeBasin);
-        register("music_player",  "吧台音乐播放器", ItemFactory::createMusicPlayer);
+        register("cooking_pot",   "item.cooking_pot.name",   ItemFactory::createCookingPot);
+        register("brewing_box",   "item.brewing_box.name",   ItemFactory::createBrewingBox);
+        register("apple_press",   "item.apple_press.name",   ItemFactory::createApplePress);
+        register("aging_barrel",  "item.aging_barrel.name",  ItemFactory::createAgingBarrel);
+        register("grape_basin",   "item.grape_basin.name",   ItemFactory::createGrapeBasin);
+        register("music_player",  "item.music_player.name",  ItemFactory::createMusicPlayer);
 
-        register("harvest_shears", "收割剪刀", ItemFactory::createHarvestShears);
+        register("harvest_shears", "item.harvest_shears.name", ItemFactory::createHarvestShears);
 
-        register("dry_wheat",      "烘干的小麦",     ItemFactory::createDryWheat);
-        register("barley",         "大麦",           ItemFactory::createBarley);
-        register("dried_barley",   "烘干的大麦",     ItemFactory::createDriedBarley);
-        register("oats",           "燕麦",           ItemFactory::createOats);
-        register("dried_oats",     "烘干的燕麦",     ItemFactory::createDriedOats);
-        register("corn_seed",      "玉米种子",       ItemFactory::createCornSeed);
-        register("corn",           "玉米",           ItemFactory::createCorn);
-        register("corn_kernels",   "玉米粒",         ItemFactory::createCornKernels);
-        register("dried_corn",     "烘干的玉米粒",   ItemFactory::createDriedCorn);
-        register("wild_nettle",    "野生荨麻",       ItemFactory::createWildNettle);
-        register("hops",           "啤酒花",         ItemFactory::createHops);
-        register("yeast",          "酵母",           ItemFactory::createYeast);
-        register("apple_mash",     "苹果泥",         ItemFactory::createAppleMash);
-        register("apple_juice",    "苹果汁",         ItemFactory::createAppleJuice);
-        register("cherry",         "樱桃",           ItemFactory::createCherry);
-        register("rotten_cherry",  "腐烂的樱桃",     ItemFactory::createRottenCherry);
+        register("dry_wheat",      "item.dry_wheat.name",      ItemFactory::createDryWheat);
+        register("barley",         "item.barley.name",         ItemFactory::createBarley);
+        register("dried_barley",   "item.dried_barley.name",   ItemFactory::createDriedBarley);
+        register("oats",           "item.oats.name",           ItemFactory::createOats);
+        register("dried_oats",     "item.dried_oats.name",     ItemFactory::createDriedOats);
+        register("corn_seed",      "item.corn_seed.name",      ItemFactory::createCornSeed);
+        register("corn",           "item.corn.name",           ItemFactory::createCorn);
+        register("corn_kernels",   "item.corn_kernels.name",   ItemFactory::createCornKernels);
+        register("dried_corn",     "item.dried_corn.name",     ItemFactory::createDriedCorn);
+        register("wild_nettle",    "item.wild_nettle.name",    ItemFactory::createWildNettle);
+        register("hops",           "item.hops.name",           ItemFactory::createHops);
+        register("yeast",          "item.yeast.name",          ItemFactory::createYeast);
+        register("apple_mash",     "item.apple_mash.name",     ItemFactory::createAppleMash);
+        register("apple_juice",    "item.apple_juice.name",    ItemFactory::createAppleJuice);
+        register("cherry",         "item.cherry.name",         ItemFactory::createCherry);
+        register("rotten_cherry",  "item.rotten_cherry.name",  ItemFactory::createRottenCherry);
 
         for (GrapeType type : GrapeType.values()) {
             final GrapeType t = type;
-            register(t.name().toLowerCase() + "_seed", t.getSeedName(),
-                    () -> ItemFactory.createGrapeSeed(t));
-            register(t.name().toLowerCase() + "_grape", t.getGrapeName(),
-                    () -> ItemFactory.createGrape(t));
+            register(t.name().toLowerCase() + "_seed", t.seedNameKey(),
+                    p -> ItemFactory.createGrapeSeed(p, t));
+            register(t.name().toLowerCase() + "_grape", t.grapeNameKey(),
+                    p -> ItemFactory.createGrape(p, t));
         }
 
         for (BeerType type : BeerType.values()) {
             if (type == BeerType.APPLE_JUICE) continue;
 
             final BeerType t = type;
-            register(t.name().toLowerCase(), t.getDisplayName(),
-                    () -> ItemFactory.createBeer(t, BeerQuality.HIGH));
+            register(t.name().toLowerCase(), t.getNameKey(),
+                    p -> ItemFactory.createBeer(p, t, BeerQuality.HIGH));
         }
     }
 
-    private static void register(String id, String displayName,
-                                 java.util.function.Supplier<ItemStack> factory) {
-        GiveableItem item = new GiveableItem(id.toLowerCase(), displayName, factory);
+    private static void register(String id, String langKey,
+                                 java.util.function.Function<Player, ItemStack> factory) {
+        GiveableItem item = new GiveableItem(id.toLowerCase(), langKey, factory);
         ITEMS.add(item);
         BY_ID.put(item.id, item);
     }
